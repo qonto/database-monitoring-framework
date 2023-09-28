@@ -1,0 +1,5 @@
+{{ if (gt .Site.Data.build.latest .Site.Data.build.current) }}
+<div id="versionWarningBanner">
+You are on {{ .Site.Data.build.current }} documentation which is outdated, the <b>latest version is {{ .Site.Data.build.latest }}</b>. Please upgrade to a newer release!
+</div>
+{{ end }}

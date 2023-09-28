@@ -1,0 +1,9 @@
+version: '3.1'
+services:
+  hugo:
+      image: klakegg/hugo:0.111.0-ext-ubuntu
+      command: server -D --poll 700ms
+      volumes:
+        - ".:/src"
+      ports:
+        - "1313:1313"

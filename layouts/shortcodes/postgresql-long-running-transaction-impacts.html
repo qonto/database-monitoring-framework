@@ -1,0 +1,2 @@
+<!-- Describes the impact of long running queries on PostgreSQL-->
+<p>A long running transaction (or query) forces PostgreSQL to maintain visibility of all rows since the beginning of the transaction. So PostgreSQL accumulate WAL files until the transaction is close.<p>

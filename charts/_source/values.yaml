@@ -1,0 +1,7 @@
+global:
+  additionalExprLabels: []
+  additionalRuleLabels: {}
+
+rulesGroupName: default
+
+rules: {}

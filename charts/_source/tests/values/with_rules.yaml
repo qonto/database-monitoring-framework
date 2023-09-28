@@ -1,0 +1,26 @@
+defaultRunbookUrl: https://acme.com/runbooks/{{chartVersion}}/{{alertName}}.md
+
+rulesGroupName: unittest
+
+rules:
+
+  Rule1:
+    expr: metric1{[additionalExprLabels]} > 42
+    for: 10m
+    labels:
+      priority: P1
+    annotations:
+      summary: "Metric 1 is over 42"
+      description: "Metric1 is {{ $value }}"
+
+  Rule2:
+    expr: metric2{[additionalExprLabels]} > 100
+    for: 10m
+    labels:
+      priority: P2
+    annotations:
+      summary: "Metric 1 is over 100"
+      description: "Metric2 is {{ $value }}"
+
+  DisabledRule:
+    enabled: false

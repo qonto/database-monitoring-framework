@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: prometheus rules tests
+templates:
+  - prometheusRules.yaml
+tests:
+  - it: render default deployment
+    asserts:
+      - isKind:
+          of: PrometheusRule
+      - equal:
+          path: spec.groups[0].name
+          value: postgresql.rules
+      - lengthEqual:
+          count: 1
+          path: spec.groups

@@ -1,0 +1,8 @@
+<p>A non-running replication slot forces PostgreSQL to keep all WAL files on its local storage.</p>
+
+<p>It could lead to:</p>
+
+<ul>
+<li>Disk space saturation on the PostgreSQL server</li>
+<li>Replication slot will no longer be usable if it reaches its max allowed storage</li>
+</ul>

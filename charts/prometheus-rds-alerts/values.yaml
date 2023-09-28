@@ -1,0 +1,178 @@
+global:
+  additionalRuleLabels: []
+
+defaultRunbookUrl: https://qonto.github.io/database-monitoring-framework/{{chartVersion}}/runbooks/rds/{{alertName}}
+rulesGroupName: rds.rules
+
+additionalPrometheusRuleLabels: {}
+
+rules:
+
+  RDSExporterMissingMetrics:
+    expr: absent(rds_exporter_build_info)
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Prometheus RDS exporter metrics are missing"
+      description: "No metrics found for Prometheus RDS exporter"
+
+  RDSExporterDown:
+    expr: up{} * on (instance) rds_exporter_build_info{} < 1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Exporter is down"
+      description: "{{ $labels.instance }} exporter is down"
+
+  RDSExporterErrors:
+    expr: increase(rds_exporter_errors_total[5m]) > 1
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "{{ $labels.instance }} is reporting errors"
+      description: "{{ $labels.instance }} is reporting {{ $value }} errors per minute"
+
+  RDSDiskSpaceLimit:
+    expr: 100 - max(100 - rds_free_storage_bytes{} * 100 / rds_allocated_storage_bytes{}) by (dbidentifier) < 10
+    for: 15m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Low free disk space"
+      description: '{{ $labels.dbidentifier }} has {{ printf "%.2g" $value }}% free disk space'
+
+  RDSDiskSpacePrediction:
+    expr: predict_linear(rds_free_storage_bytes{}[30m], 3600 * 4) < 1
+    for: 15m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Predic out of disk space in 4 hours"
+      description: "{{ $labels.dbidentifier }} will run out of disk space in 4 hours"
+
+  RDSPostgreSQLMaximumUsedTransaction:
+    expr: rds_maximum_used_transaction_ids_average > (2^32) * 0.5 # 50% of the max transactions limit
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "{{ $labels.dbidentifier }} is close to the maximum transactions hard limit"
+      description: "{{ $labels.dbidentifier }} is using {{ $value }} transaction IDs on 4 billions hard limit"
+
+  RDSCPUUtilization:
+    expr: rds_cpu_usage_percent_average > 85
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "{{ $labels.dbidentifier }} has high CPU utilization"
+      description: '{{ $labels.dbidentifier }} has {{ printf "%.2g" $value }}% CPU used'
+
+  RDSNonCPUUtilization:
+    expr: rds_dbload_noncpu_average > on(dbidentifier) max(rds_instance_vcpu_average{}) by (instance_class) * on (instance_class) group_right() max(rds_instance_info{}) by (dbidentifier, instance_class) * 4
+    for: 10m
+    labels:
+      severity: critical
+    annotations:
+      summary: "{{ $labels.dbidentifier }} has high non CPU utilization"
+      description: "{{ $labels.dbidentifier }} has {{ $value }} non CPU wait"
+
+  RDSMemoryUtilization:
+    expr: |
+      100 - (
+          (max(rds_freeable_memory_bytes{}) by (dbidentifier))
+          * 100
+          / on(dbidentifier) (max(rds_instance_memory_bytes{}) by (instance_class) * on (instance_class) group_right() max(rds_instance_info{}) by (dbidentifier, instance_class))
+      ) > 80
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "RDS instance {{ $labels.dbidentifier }} low available memory"
+      description: '{{ $labels.dbidentifier }} used {{ printf "%.2g" $value }}% of its max memory'
+
+  RDSSwapUtilization:
+    expr: delta(rds_swap_usage_bytes{}[1h]) / 1024 / 1024 >= 20
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "{{ $labels.dbidentifier }} SWAP utilization is high"
+      description: "{{ $labels.dbidentifier }} use {{ $value }}MB of SWAP"
+
+  RDSIOPSUtilization:
+    expr: (rds_read_iops_average{} + rds_write_iops_average{}) * 100 / rds_max_disk_iops_average{} > 80
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "{{ $labels.dbidentifier }} is close from its max allocated IOPS"
+      description: '{{ $labels.dbidentifier }} uses {{ printf "%.2g" $value }}% of its disk IOPS'
+
+  RDSReplicationLag:
+    expr: rds_replica_lag_seconds{} > 3600
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "{{ $labels.dbidentifier }} has high replication lag"
+      description: "{{ $labels.dbidentifier }} has {{ $value | humanizeDuration }} lag"
+
+  RDSQuotaInstanceLimit:
+    expr: |
+      count(
+          count(rds_instance_info{}) by (aws_account_id, aws_region, dbidentifier)
+      ) by (aws_account_id, aws_region)
+      * 100
+      /
+      sum(
+          max(rds_quota_max_dbinstances_average{}) by (aws_account_id, aws_region)
+      ) by (aws_account_id, aws_region) > 80
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "The number of RDS instances is close to the maximum quota"
+      description: 'Using {{ printf "%.2g" $value }}% of allowed RDS instances in {{ $labels.aws_account_id}}:{{ $labels.aws_region }}'
+
+  RDSQuotaStorageLimit:
+    expr: |
+      sum(
+          max(rds_allocated_storage_bytes{}) by (aws_account_id, aws_region, dbidentifier)
+      ) by (aws_account_id, aws_region)
+      * 100
+      /
+      sum(
+          max(rds_quota_total_storage_bytes{}) by (aws_account_id, aws_region)
+      ) by (aws_account_id, aws_region) > 80
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "The total of RDS storage is close from the AWS quota limit"
+      description: 'Using {{ printf "%.2g" $value }}% of allowed RDS storage in {{ $labels.aws_account_id}}:{{ $labels.aws_region }}'
+
+  RDSUnappliedParameters:
+    expr: rds_instance_info{pending_modified_values="true"} > 0
+    for: 1h
+    labels:
+      severity: warning
+    annotations:
+      summary: "Instance has unapplied parameters"
+      description: "{{ $labels.dbidentifier }} has unapplied parameters"
+    pintComments:
+      - disable promql/series
+
+  RDSForcedMaintenance:
+    expr: rds_instance_info{pending_maintenance=~"auto-applied|forced"} > 0
+    for: 1h
+    labels:
+      severity: warning
+    annotations:
+      summary: "Instance has forced maintenance"
+      description: "{{ $labels.dbidentifier }} has forced maintenance"
+    pintComments:
+      - disable promql/series

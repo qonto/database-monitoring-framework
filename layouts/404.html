@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.Language.Lang }}">
+
+  <head>
+    {{ partial "docs/html-head" . }}
+    {{ partial "docs/inject/head" . }}
+
+    <style>
+      .not-found {
+        text-align: center;
+      }
+      .not-found h1 {
+        margin: .25em 0 0 0;
+        opacity: .25;
+        font-size: 40vmin;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="flex justify-center not-found">
+      <div>
+        <h1>404</h1>
+        <h2>Page Not Found. Don't panic!</h2>
+        <h4>If you were directed here by a link from an alert, we sadly don't have a runbook for it... yet!</h4>
+        <p>All runbooks on this site are created in the open and maintained by a team of passionate people.</p>
+        <p>If you would like to help us, please consider opening a pull request. Thank you!</p>
+      </div>
+    </main>
+  </body>
+
+</html>
