@@ -1,0 +1,20 @@
+name: linter
+on:
+  push:
+    branches:
+      - "*"
+
+permissions:
+  contents: read
+
+jobs:
+  markdown:
+    name: markdown
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: markdownlint-cli2-action
+        uses: DavidAnson/markdownlint-cli2-action@v13
+        with:
+          globs: '**/*.md'

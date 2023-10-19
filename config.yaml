@@ -1,0 +1,35 @@
+baseURL: "/"
+languageCode: "en-us"
+title: "Monitoring framework"
+
+theme: book
+enableGitInfo: true
+
+# canonifyURLs parameter is required to serve static content (eg. architecture.png) in subfolder baseURL.
+# But parameter is mark as deprecated in https://gohugo.io/content-management/urls/#canonical-urls
+# See:
+# - https://github.com/gohugoio/hugo/issues/4733
+# - https://gohugo.io/content-management/static-files/
+canonifyURLs: true
+
+params:
+  BookRepo: "https://github.com/qonto/database-monitoring-framework"
+  BookEditPath: "edit/main" # Enable 'Edit this page' links for 'doc' page type
+  BookSearch: true
+  BookSection: "/"
+  BookDateFormat: 'Jan 2, 2006'
+  BookTheme: "light"
+
+disablePathToLower: true # Do not convert the url/path to lowercase
+
+staticDir:
+- static
+
+markup:
+  goldmark:
+    renderer:
+      # Allows rendering HTML tags. This would only be truly "unsafe" if we were accepting untrusted user input and rendering it, which we aren't.
+      unsafe: true
+  highlight:
+    lineNumbersInTable: true
+    anchorLineNos: true

@@ -1,0 +1,4 @@
+rules:
+  Rule1:
+    labels:
+      priority: P3

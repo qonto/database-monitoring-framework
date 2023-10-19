@@ -1,0 +1,22 @@
+apiVersion: v2
+type: application
+
+# version and appVersion values are overrided during build step
+version: 0.0.0
+appVersion: 0.0.0
+
+name: prometheus-rds-alerts-chart
+description: Prometheus alerts for AWS RDS
+home: https://qonto.github.io/database-monitoring-framework
+sources:
+  - https://github.com/qonto/database-monitoring-framework
+annotations:
+  artifacthub.io/category: database
+  artifacthub.io/links: |
+    - name: Chart Source
+      url: https://github.com/qonto/database-monitoring-framework/tree/main/charts/prometheus-rds-alerts
+keywords:
+  - aws
+  - exporter
+  - prometheus
+  - rds

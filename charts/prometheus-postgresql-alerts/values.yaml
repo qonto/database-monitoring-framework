@@ -1,0 +1,83 @@
+global:
+  additionalRuleLabels: []
+
+defaultRunbookUrl: https://qonto.github.io/database-monitoring-framework/{{chartVersion}}/runbooks/postgresql/{{alertName}}
+rulesGroupName: postgresql.rules
+
+rules:
+
+  PostgreSQLExporterDown:
+    expr: up{} * on (instance) postgres_exporter_build_info{} < 1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Exporter is down"
+      description: "{{ $labels.instance }} exporter is down"
+
+  PostgreSQLExporterScrapingLimit:
+    expr: avg_over_time(pg_exporter_last_scrape_duration_seconds{}[10m]) > 30
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Exporter scraping take long time"
+      description: "{{ $labels.instance }} scraping take long time"
+
+  PostgreSQLMaxConnections:
+    expr: sum(pg_stat_connections_count) by (server) * 100 / on (server) pg_settings_max_connections{} > 80
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "{{ $labels.server }} is close from the maximum database connections"
+      description: '{{ $labels.server }} uses {{ printf "%.2g" $value }}% of database connections'
+
+  PostgreSQLReplicationSlotStorageLimit:
+    expr: pg_replication_slots_available_storage_percent{} < 20
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "{{ $labels.slot_name }} on {{ $labels.dbidentifier }} is close to its storage limit"
+      description: '{{ $labels.slot_name }} uses {{ printf "%.2g" $value }}% of its storage limit'
+
+  PostgreSQLInactiveLogicalReplicationSlot:
+    expr: max(pg_replication_slots_active{slot_type="logical"} < 1) by (server, slot_name)
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Logical replication slot is inactive"
+      description: "{{ $labels.slot_name }} on {{ $labels.server | stripDomain | stripPort }} is inactive"
+
+  PostgreSQLInactivePhysicalReplicationSlot:
+    expr: max(pg_replication_slots_active{slot_type="physical"} < 1) by (server, slot_name)
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Physical replication slot is inactive"
+      description: "{{ $labels.slot_name }} on {{ $labels.server | stripDomain | stripPort }} is inactive"
+
+  PostgreSQLLongRunningQuery:
+    expr: pg_active_backend_duration_minutes{usename!=""} > 30
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Long running query on {{ $labels.datname }} of {{ $labels.server | stripPort }}."
+      description: "{{ $labels.usename }} is running a long query on {{ $labels.datname }} of {{ $labels.server | stripDomain | stripPort }} with pid {{ $labels.pid }}"
+    pintComments:
+      - disable promql/series
+
+  PostgreSQLInvalidIndex:
+    expr: max(pg_stat_user_indexes_idx_blks_hit{indisvalid="false"}) by (cluster, datname, relname, indexrelname) >= 0
+    for: 1h
+    labels:
+      severity: warning
+    annotations:
+      summary: "{{ $labels.indexrelname }} is invalid"
+      description: "{{ $labels.indexrelname }} of {{ $labels.relname }} table on {{ $labels.datname }} database on {{ $labels.server }} is invalid"
+    pintComments:
+      - disable promql/series

@@ -1,0 +1,120 @@
+name: release
+on:
+  push:
+    tags:
+      - "*"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  pages: write
+
+# Default to bash
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  documentation:
+    name: documentation
+    runs-on: ubuntu-latest
+    concurrency:
+      group: "pages" # Allow one concurrent deployment
+      cancel-in-progress: true
+    env:
+      HUGO_VERSION: 0.115.4
+      BASE_URL: https://qonto.github.io/database-monitoring-framework
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Install Hugo CLI
+        run: |
+          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
+          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Create public directory
+        run: mkdir public
+
+      - name: Generate website versions
+        run: ./scripts/generate_website_versions.sh ${BASE_URL}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./public
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v2
+        id: deployment
+
+  prometheus-rds-alerts:
+    name: prometheus-rds-alerts
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Configure AWS credentials for helm chart
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1 # ECR Public can only be logged into from the us-east-1 region
+          role-to-assume: arn:aws:iam::202662887508:role/ecr-prometheus-rds-alerts-chart
+          role-session-name: githubActions
+
+      - name: Login to Amazon ECR for helm chart
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+          mask-password: 'true'
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Downgrade Helm # 1.13.0 has bug that block push charts on OCI https://github.com/helm/helm/issues/12491
+        run: |
+          curl -sSLo /tmp/helm.tar.gz "https://get.helm.sh/helm-v3.12.0-linux-amd64.tar.gz" && \
+          tar --strip-components=1 -C /tmp -xzvf /tmp/helm.tar.gz linux-amd64/helm && \
+          mv /tmp/helm /usr/local/bin/helm && \
+          rm -f /tmp/helm.tar.gz
+
+      - name: Release promethes-rds-alerts
+        run: ./scripts/helm-release.sh prometheus-rds-alerts-chart charts/prometheus-rds-alerts "${{ github.ref_name }}" "qonto"
+
+  prometheus-postgresql-alerts:
+    name: prometheus-postgresql-alerts
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Configure AWS credentials for helm chart
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: us-east-1 # ECR Public can only be logged into from the us-east-1 region
+          role-to-assume: arn:aws:iam::202662887508:role/ecr-prometheus-postgresql-alerts-chart
+          role-session-name: githubActions
+
+      - name: Login to Amazon ECR for helm chart
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry-type: public
+          mask-password: 'true'
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Downgrade Helm # 1.13.0 has bug that block push charts on OCI https://github.com/helm/helm/issues/12491
+        run: |
+          curl -sSLo /tmp/helm.tar.gz "https://get.helm.sh/helm-v3.12.0-linux-amd64.tar.gz" && \
+          tar --strip-components=1 -C /tmp -xzvf /tmp/helm.tar.gz linux-amd64/helm && \
+          mv /tmp/helm /usr/local/bin/helm && \
+          rm -f /tmp/helm.tar.gz
+
+      - name: Release promethes-postgresql-alerts
+        run: ./scripts/helm-release.sh prometheus-postgresql-alerts-chart charts/prometheus-postgresql-alerts "${{ github.ref_name }}" "qonto"

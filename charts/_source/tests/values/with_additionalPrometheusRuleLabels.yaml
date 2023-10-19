@@ -1,0 +1,3 @@
+additionalPrometheusRuleLabels:
+  app: monitoring
+  prometheus: main

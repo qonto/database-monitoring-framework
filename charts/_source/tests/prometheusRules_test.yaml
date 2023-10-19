@@ -1,0 +1,71 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: prometheus rules tests
+templates:
+  - prometheusRules.yaml
+tests:
+  - it: render default deployment
+    values:
+      - ./values/with_rules.yaml
+    asserts:
+      - isKind:
+          of: PrometheusRule
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-source
+      - equal:
+          path: spec.groups[0].rules[0].alert
+          value: Rule1
+      - equal:
+          path: spec.groups[0].rules[0].expr
+          value: |
+            metric1{} > 42
+      - equal:
+          path: spec.groups[0].rules[0].for
+          value: 10m
+      - equal:
+          path: spec.groups[0].rules[0].labels.priority
+          value: P1
+      - equal:
+          path: spec.groups[0].rules[0].annotations.summary
+          value: "Metric 1 is over 42"
+      - equal:
+          path: spec.groups[0].rules[0].annotations.runbook_url
+          value: https://acme.com/runbooks/0.0.0/Rule1.md
+      - lengthEqual:
+          path: spec.groups[0].rules
+          count: 2
+  - it: render with global additional labels on expression
+    values:
+      - ./values/with_rules.yaml
+      - ./values/with_globalAdditionalExprLabels.yaml
+    asserts:
+      - equal:
+          path: spec.groups[0].rules[0].expr
+          value: |
+            metric1{environment=production,} > 42
+  - it: render with global additional labels on rules
+    values:
+      - ./values/with_rules.yaml
+      - ./values/with_globalAdditionalRuleLabels.yaml
+    asserts:
+      - equal:
+          path: spec.groups[0].rules[0].labels.team
+          value: sre
+  - it: render with global additional labels on rules
+    values:
+      - ./values/with_rules.yaml
+      - ./values/with_low_priority.yaml
+    asserts:
+      - equal:
+          path: spec.groups[0].rules[0].labels.priority
+          value: P3
+  - it: render with additional additionalPrometheusRuleLabels
+    values:
+      - ./values/with_additionalPrometheusRuleLabels.yaml
+    asserts:
+      - equal:
+          path: metadata.labels.app
+          value: monitoring
+      - equal:
+          path: metadata.labels.prometheus
+          value: main

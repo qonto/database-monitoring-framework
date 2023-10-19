@@ -1,0 +1,70 @@
+name: test
+on:
+  push:
+    branches:
+      - "*"
+
+permissions:
+  contents: read
+
+jobs:
+
+  sql:
+    name: sql
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: hackme
+          POSTGRES_DB: test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: run SQL tests
+        run: make sql-test
+        env:
+          PGHOST: localhost
+          PGUSER: postgres
+          PGPASSWORD: hackme
+          PGDATABASE: test
+
+  helm:
+    name: helm
+    runs-on: ubuntu-latest
+    env:
+      HELM_UNITTEST_VERSION: v0.3.5
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install helm-unittest
+        run: helm plugin install --version $HELM_UNITTEST_VERSION https://github.com/helm-unittest/helm-unittest.git
+
+      - name: Run Helm test
+        run: make helm-test
+
+      - name: Check all alerts have runbooks
+        run: make runbook-test
+
+  kubeconform:
+    name: kubeconform
+    runs-on: ubuntu-latest
+    env:
+      KUBECONFORM_VERSION: 0.6.2
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install kubeconform
+        run: |
+          curl -sSLo /tmp/kubeconform.tar.gz "https://github.com/yannh/kubeconform/releases/download/v${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz" \
+          && tar -C /usr/local/bin/ -xzvf /tmp/kubeconform.tar.gz
+
+      - name: Run Kubeconform test
+        run: make kubeconform-test
