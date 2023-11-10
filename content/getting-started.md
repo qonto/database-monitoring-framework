@@ -36,7 +36,7 @@ Steps to deploy the framework on on your infrastructure:
 
     ```bash
     # PostgreSQL alerts
-    helm install prometheus-postgresql-alerts-chart oci://public.ecr.aws/qonto/prometheus-rds-alerts-chart:{{% current_version %}} --namespace ${KUBERNETES_NAMESPACE}
+    helm install prometheus-postgresql-alerts-chart oci://public.ecr.aws/qonto/prometheus-postgresql-alerts-chart:{{% current_version %}} --namespace ${KUBERNETES_NAMESPACE}
     ```
 
 ## Charts
