@@ -18,7 +18,9 @@ The monitoring system is degraded. PostgreSQL exporter does not collect PostgreS
 
     An overloaded server may have difficulty collecting metrics.
 
-1. Check `prometheus-postgresql-exporter` logs
+2. Look at PostgreSQL Server logs to identify long running queries.
+
+    You may need to enable [`log_min_duration_statement`](https://www.postgresql.org/docs/current/runtime-config-logging.html#GUC-LOG-MIN-DURATION-STATEMENT) to identify which queries are long to be executed.
 
 ## Mitigation
 
