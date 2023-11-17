@@ -1,4 +1,5 @@
 SELECT
+    slot_type,
     database,
     slot_name,
     active::TEXT,
