@@ -113,7 +113,7 @@ rules:
       description: '{{ $labels.dbidentifier }} uses {{ printf "%.2g" $value }}% of its disk IOPS'
 
   RDSReplicationLag:
-    expr: rds_replica_lag_seconds{} > 3600
+    expr: rds_replica_lag_seconds{} > 60
     for: 5m
     labels:
       severity: warning
