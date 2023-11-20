@@ -15,6 +15,24 @@ rules:
       summary: "Exporter is down"
       description: "{{ $labels.instance }} exporter is down"
 
+  PostgreSQLExporterMissingScrapeErrorMetric:
+    expr: absent(postgres_exporter_last_scrape_error)
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "PostgreSQL exporter last scrape error metric is missing"
+      description: "PostgreSQL exporter last scrape error metric is missing. Either the exporter is down or some metrics are not collected anymore"
+
+  PostgreSQLExporterErrors:
+    expr: max(last_over_time(pg_exporter_last_scrape_error[10m])) by (job) > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Exporter is reporting scraping errors"
+      description: "{{ $labels.job }} is reporting scraping errors. Some metrics are not collected anymore"
+
   PostgreSQLExporterScrapingLimit:
     expr: avg_over_time(pg_exporter_last_scrape_duration_seconds{}[10m]) > 30
     for: 5m
