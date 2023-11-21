@@ -2,7 +2,7 @@
 
 Database Monitoring Framework uses GitHub to manage reviews of pull requests.
 
-* If you are a new contributor. See: [Steps to Contribute](#steps-to-contribute)
+* If you are a new contributor, see: [Steps to Contribute](#steps-to-contribute)
 
 * If you have a trivial fix or improvement, go ahead and create a pull request
 
