@@ -16,7 +16,7 @@ rules:
       description: "{{ $labels.instance }} exporter is down"
 
   PostgreSQLExporterMissingScrapeErrorMetric:
-    expr: absent(postgres_exporter_last_scrape_error)
+    expr: absent(pg_exporter_last_scrape_error)
     for: 5m
     labels:
       severity: critical
