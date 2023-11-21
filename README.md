@@ -13,3 +13,5 @@ Go to <https://qonto.github.io/database-monitoring-framework/latest/> for more i
 ## Contributing
 
 The project is open to contribution. See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+To report a security issue, please visit [SECURITY.md](SECURITY.md)
