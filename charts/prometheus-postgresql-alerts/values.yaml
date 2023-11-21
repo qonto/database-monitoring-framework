@@ -25,7 +25,7 @@ rules:
       description: "PostgreSQL exporter last scrape error metric is missing. Either the exporter is down or some metrics are not collected anymore"
 
   PostgreSQLExporterErrors:
-    expr: max(last_over_time(pg_exporter_last_scrape_error[10m])) by (job) > 0
+    expr: max by (job) (last_over_time(pg_exporter_last_scrape_error[10m])) > 0
     for: 5m
     labels:
       severity: critical
@@ -43,7 +43,11 @@ rules:
       description: "{{ $labels.instance }} scraping take long time"
 
   PostgreSQLMaxConnections:
-    expr: sum(pg_stat_connections_count) by (server) * 100 / on (server) pg_settings_max_connections{} > 80
+    expr: |
+      max by (server) (pg_stat_connections_count)
+      * 100
+      / max by (server) (pg_settings_max_connections{})
+      > 80
     for: 10m
     labels:
       severity: warning
@@ -52,16 +56,16 @@ rules:
       description: '{{ $labels.server }} uses {{ printf "%.2g" $value }}% of database connections'
 
   PostgreSQLReplicationSlotStorageLimit:
-    expr: pg_replication_slots_available_storage_percent{} < 20
+    expr: max by (server, slot_name) (pg_replication_slots_available_storage_percent{}) < 20
     for: 5m
     labels:
       severity: warning
     annotations:
-      summary: "{{ $labels.slot_name }} on {{ $labels.dbidentifier }} is close to its storage limit"
+      summary: "{{ $labels.slot_name }} on {{ $labels.server | stripDomain | stripPort }} is close to its storage limit"
       description: '{{ $labels.slot_name }} uses {{ printf "%.2g" $value }}% of its storage limit'
 
   PostgreSQLInactiveLogicalReplicationSlot:
-    expr: max(pg_replication_slots_active{slot_type="logical"} < 1) by (server, slot_name)
+    expr: max by (server, slot_name) (pg_replication_slots_active{slot_type="logical"}) < 1
     for: 10m
     labels:
       severity: warning
@@ -70,7 +74,7 @@ rules:
       description: "{{ $labels.slot_name }} on {{ $labels.server | stripDomain | stripPort }} is inactive"
 
   PostgreSQLInactivePhysicalReplicationSlot:
-    expr: max(pg_replication_slots_active{slot_type="physical"} < 1) by (server, slot_name)
+    expr: max by (server, slot_name) (pg_replication_slots_active{slot_type="physical"}) < 1
     for: 10m
     labels:
       severity: warning
@@ -79,7 +83,7 @@ rules:
       description: "{{ $labels.slot_name }} on {{ $labels.server | stripDomain | stripPort }} is inactive"
 
   PostgreSQLLongRunningQuery:
-    expr: pg_active_backend_duration_minutes{usename!=""} > 30
+    expr: max by (server, datname, usename) (pg_active_backend_duration_minutes{usename!=""}) > 30
     for: 1m
     labels:
       severity: warning
@@ -90,7 +94,7 @@ rules:
       - disable promql/series
 
   PostgreSQLInvalidIndex:
-    expr: max(pg_stat_user_indexes_idx_blks_hit{indisvalid="false"}) by (cluster, datname, relname, indexrelname) >= 0
+    expr: max by (cluster, datname, relname, indexrelname) (pg_stat_user_indexes_idx_blks_hit{indisvalid="false"}) >= 0
     for: 1h
     labels:
       severity: warning

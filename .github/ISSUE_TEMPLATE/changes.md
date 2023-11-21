@@ -9,15 +9,11 @@ assignees: ''
 
 # Objective
 
-
-
 # Why
-
-
 
 # How
 
-- 
+-
 
 # Release plan
 
