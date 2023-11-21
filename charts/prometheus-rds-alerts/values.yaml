@@ -36,7 +36,7 @@ rules:
       description: "{{ $labels.instance }} is reporting {{ $value }} errors per minute"
 
   RDSDiskSpaceLimit:
-    expr: 100 - max(100 - rds_free_storage_bytes{} * 100 / rds_allocated_storage_bytes{}) by (dbidentifier) < 10
+    expr: max by (aws_account_id, aws_region, dbidentifier) (rds_free_storage_bytes{} * 100 / rds_allocated_storage_bytes{}) < 10
     for: 15m
     labels:
       severity: warning
@@ -45,7 +45,7 @@ rules:
       description: '{{ $labels.dbidentifier }} has {{ printf "%.2g" $value }}% free disk space'
 
   RDSDiskSpacePrediction:
-    expr: predict_linear(rds_free_storage_bytes{}[30m], 3600 * 4) < 1
+    expr: predict_linear(min by (aws_account_id, aws_region, dbidentifier) (rds_free_storage_bytes{})[30m:], 3600 * 4) < 1
     for: 15m
     labels:
       severity: critical
@@ -54,7 +54,7 @@ rules:
       description: "{{ $labels.dbidentifier }} will run out of disk space in 4 hours"
 
   RDSPostgreSQLMaximumUsedTransaction:
-    expr: rds_maximum_used_transaction_ids_average > (2^32) * 0.5 # 50% of the max transactions limit
+    expr: max by (aws_account_id, aws_region, dbidentifier) (rds_maximum_used_transaction_ids_average) > (2^32) * 0.5 # 50% of the max transactions limit
     for: 5m
     labels:
       severity: critical
@@ -63,7 +63,7 @@ rules:
       description: "{{ $labels.dbidentifier }} is using {{ $value }} transaction IDs on 4 billions hard limit"
 
   RDSCPUUtilization:
-    expr: rds_cpu_usage_percent_average > 85
+    expr: max by (aws_account_id, aws_region, dbidentifier) (rds_cpu_usage_percent_average) > 85
     for: 10m
     labels:
       severity: warning
@@ -72,7 +72,12 @@ rules:
       description: '{{ $labels.dbidentifier }} has {{ printf "%.2g" $value }}% CPU used'
 
   RDSNonCPUUtilization:
-    expr: rds_dbload_noncpu_average > on(dbidentifier) max(rds_instance_vcpu_average{}) by (instance_class) * on (instance_class) group_right() max(rds_instance_info{}) by (dbidentifier, instance_class) * 4
+    expr: |
+      max by (aws_account_id, aws_region, dbidentifier) (rds_dbload_noncpu_average)
+      > on(aws_account_id, aws_region, dbidentifier) (
+          4 *
+          max by (instance_class) (rds_instance_vcpu_average{}) * on (instance_class) group_right() max by (aws_account_id, aws_region, dbidentifier, instance_class) (rds_instance_info{})
+      )
     for: 10m
     labels:
       severity: critical
@@ -82,11 +87,12 @@ rules:
 
   RDSMemoryUtilization:
     expr: |
-      100 - (
-          (max(rds_freeable_memory_bytes{}) by (dbidentifier))
-          * 100
-          / on(dbidentifier) (max(rds_instance_memory_bytes{}) by (instance_class) * on (instance_class) group_right() max(rds_instance_info{}) by (dbidentifier, instance_class))
-      ) > 80
+      max by (aws_account_id, aws_region, dbidentifier) (rds_freeable_memory_bytes{})
+      * 100
+      / on(aws_account_id, aws_region, dbidentifier) (
+          max by (instance_class) (rds_instance_memory_bytes{}) * on (instance_class) group_right() max by (aws_account_id, aws_region, dbidentifier, instance_class) (rds_instance_info{})
+      )
+      < 20
     for: 10m
     labels:
       severity: warning
@@ -95,16 +101,16 @@ rules:
       description: '{{ $labels.dbidentifier }} used {{ printf "%.2g" $value }}% of its max memory'
 
   RDSSwapUtilization:
-    expr: delta(rds_swap_usage_bytes{}[1h]) / 1024 / 1024 >= 20
+    expr: max by (aws_account_id, aws_region, dbidentifier) (delta(rds_swap_usage_bytes{}[1h])) / 1024 / 1024 >= 20
     for: 2m
     labels:
       severity: warning
     annotations:
       summary: "{{ $labels.dbidentifier }} SWAP utilization is high"
-      description: "{{ $labels.dbidentifier }} use {{ $value }}MB of SWAP"
+      description: "{{ $labels.dbidentifier }} use {{ $value }} MB of SWAP"
 
   RDSIOPSUtilization:
-    expr: (rds_read_iops_average{} + rds_write_iops_average{}) * 100 / rds_max_disk_iops_average{} > 80
+    expr: max by (aws_account_id, aws_region, dbidentifier) ((rds_read_iops_average{} + rds_write_iops_average{}) * 100 / rds_max_disk_iops_average{}) > 80
     for: 10m
     labels:
       severity: warning
@@ -113,7 +119,7 @@ rules:
       description: '{{ $labels.dbidentifier }} uses {{ printf "%.2g" $value }}% of its disk IOPS'
 
   RDSReplicationLag:
-    expr: rds_replica_lag_seconds{} > 300
+    expr: max by (aws_account_id, aws_region, dbidentifier) (rds_replica_lag_seconds{}) > 300
     for: 5m
     labels:
       severity: warning
@@ -156,7 +162,7 @@ rules:
       description: 'Using {{ printf "%.2g" $value }}% of allowed RDS storage in {{ $labels.aws_account_id}}:{{ $labels.aws_region }}'
 
   RDSUnappliedParameters:
-    expr: rds_instance_info{pending_modified_values="true"} > 0
+    expr: max by (aws_account_id, aws_region, dbidentifier) (rds_instance_info{pending_modified_values="true"}) > 0
     for: 1h
     labels:
       severity: warning
@@ -167,7 +173,7 @@ rules:
       - disable promql/series
 
   RDSForcedMaintenance:
-    expr: rds_instance_info{pending_maintenance=~"auto-applied|forced"} > 0
+    expr: max by (aws_account_id, aws_region, dbidentifier) (rds_instance_info{pending_maintenance=~"auto-applied|forced"}) > 0
     for: 1h
     labels:
       severity: warning
