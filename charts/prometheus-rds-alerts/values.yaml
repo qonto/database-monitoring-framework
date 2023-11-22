@@ -100,7 +100,7 @@ rules:
       severity: warning
     annotations:
       summary: "RDS instance {{ $labels.dbidentifier }} low available memory"
-      description: '{{ $labels.dbidentifier }} used {{ printf "%.2g" $value }}% of its max memory'
+      description: '{{ $labels.dbidentifier }} has {{ printf "%.0f" $value }}% free memory'
 
   RDSSwapUtilization:
     expr: max by (aws_account_id, aws_region, dbidentifier) (delta(rds_swap_usage_bytes{}[1h])) / 1024 / 1024 >= 20
