@@ -85,12 +85,12 @@ rules:
       description: "{{ $labels.slot_name }} on {{ $labels.server | stripDomain | stripPort }} is inactive"
 
   PostgreSQLLongRunningQuery:
-    expr: max by (server, datname, usename) (pg_active_backend_duration_minutes{usename!=""}) > 30
+    expr: max by (server, datname, usename, pid) (pg_active_backend_duration_minutes{usename!=""}) > 30
     for: 1m
     labels:
       severity: warning
     annotations:
-      summary: "Long running query on {{ $labels.datname }} of {{ $labels.server | stripPort }}."
+      summary: "Long running query on {{ $labels.datname }} of {{ $labels.server | stripDomain | stripPort }}"
       description: "{{ $labels.usename }} is running a long query on {{ $labels.datname }} of {{ $labels.server | stripDomain | stripPort }} with pid {{ $labels.pid }}"
     pintComments:
       - disable promql/series
