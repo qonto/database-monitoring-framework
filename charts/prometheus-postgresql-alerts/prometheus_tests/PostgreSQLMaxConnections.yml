@@ -1,0 +1,25 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: PostgreSQLMaxConnections
+      interval: 1m
+      input_series:
+          - series: 'pg_stat_connections_count{server="db1.unittest.eu-west-3.rds.amazonaws.com:5432"}'
+            values: 905x10 # 90.5 that are rendered as 90%
+          - series: 'pg_settings_max_connections{server="db1.unittest.eu-west-3.rds.amazonaws.com:5432"}'
+            values: 1000x10
+      alert_rule_test:
+          - alertname: PostgreSQLMaxConnections
+            eval_time: 10m
+            exp_alerts:
+                - exp_labels:
+                      server: db1.unittest.eu-west-3.rds.amazonaws.com:5432
+                      severity: warning
+                  exp_annotations:
+                      summary: "db1 is close from the maximum database connections"
+                      description: "db1 uses 90% of the maximum database connections"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/postgresql/PostgreSQLMaxConnections"
