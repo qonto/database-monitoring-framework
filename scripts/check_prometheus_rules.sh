@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Check Prometheus rules in chart are valid
 
