@@ -21,8 +21,13 @@ runbook-test:
 sql-test:
 	PGHOST=localhost PGUSER=postgres PGPASSWORD=hackme PGDATABASE=test ./scripts/validate_sql_files.sh content $(PGDATABASE)
 
+.PHONY: prometheus-test
+prometheus-test:
+	./scripts/check_prometheus_rules.sh charts/prometheus-rds-alerts
+	./scripts/check_prometheus_rules.sh charts/prometheus-postgresql-alerts
+
 .PHONY: all-tests
-all-tests: helm-test kubeconform-test runbook-test sql-test
+all-tests: helm-test kubeconform-test runbook-test sql-test prometheus-test
 
 .PHONY: helm-release
 helm-release:
