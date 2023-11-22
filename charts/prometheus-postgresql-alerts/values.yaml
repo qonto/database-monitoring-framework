@@ -102,6 +102,6 @@ rules:
       severity: warning
     annotations:
       summary: "{{ $labels.indexrelname }} is invalid"
-      description: "{{ $labels.indexrelname }} of {{ $labels.relname }} table on {{ $labels.datname }} database on {{ $labels.server }} is invalid"
+      description: "{{ $labels.indexrelname }} of {{ $labels.relname }} table on {{ $labels.datname }} database on {{ $labels.cluster }} is invalid"
     pintComments:
       - disable promql/series
