@@ -1,8 +1,8 @@
 version: '3.1'
 services:
   hugo:
-      image: klakegg/hugo:0.111.0-ext-ubuntu
-      command: server -D --poll 700ms
+      image: hugomods/hugo:${HUGO_VERSION-git-0.120.4}
+      command: hugo server -D --bind 0.0.0.0 --poll 700ms
       volumes:
         - ".:/src"
       ports:

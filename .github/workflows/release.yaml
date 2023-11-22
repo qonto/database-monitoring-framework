@@ -25,7 +25,7 @@ jobs:
       group: "pages" # Allow one concurrent deployment
       cancel-in-progress: true
     env:
-      HUGO_VERSION: 0.115.4
+      HUGO_VERSION: 0.120.4
       BASE_URL: https://qonto.github.io/database-monitoring-framework
     environment:
       name: github-pages
