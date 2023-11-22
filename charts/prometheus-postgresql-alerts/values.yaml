@@ -64,7 +64,7 @@ rules:
       severity: warning
     annotations:
       summary: "{{ $labels.slot_name }} on {{ $labels.server | stripDomain | stripPort }} is close to its storage limit"
-      description: '{{ $labels.slot_name }} uses {{ printf "%.2g" $value }}% of its storage limit'
+      description: '{{ $labels.slot_name }} has {{ printf "%.2g" $value }}% free disk storage space'
 
   PostgreSQLInactiveLogicalReplicationSlot:
     expr: max by (server, slot_name) (pg_replication_slots_active{slot_type="logical"}) < 1
