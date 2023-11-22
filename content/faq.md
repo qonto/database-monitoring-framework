@@ -15,6 +15,14 @@ This project was initiated by [Qonto's](https://qonto.com/) SRE engineers to sha
 
 Yes, we took lots of inspiration on [Prometheus-operator runbook](https://github.com/prometheus-operator/runbooks), which provides similar experience for Prometheus & Kubernetes technologies.
 
+## Deployment
+
+### Can I deploy the database monitoring framework on Prometheus standalone deployment?
+
+Project was designed for Kubernetes deployment using Prometheus operator, but you can use for standalone deployment.
+
+Use the `format=PrometheusConfigurationFile` Helm parameter to render rules as Prometheus rule files.
+
 ## Alerts
 
 ### Customize alerts
