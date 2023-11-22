@@ -48,7 +48,7 @@ rules:
 
   RDSDiskSpacePrediction:
     expr: predict_linear(min by (aws_account_id, aws_region, dbidentifier) (rds_free_storage_bytes{})[30m:], 3600 * 4) < 1
-    for: 15m
+    for: 10m
     labels:
       severity: critical
     annotations:
