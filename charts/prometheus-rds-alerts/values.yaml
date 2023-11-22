@@ -118,7 +118,7 @@ rules:
       severity: warning
     annotations:
       summary: "{{ $labels.dbidentifier }} is close from its max allocated IOPS"
-      description: '{{ $labels.dbidentifier }} uses {{ printf "%.2g" $value }}% of its disk IOPS'
+      description: '{{ $labels.dbidentifier }} uses {{ printf "%.0f" $value }}% of its disk IOPS'
 
   RDSReplicationLag:
     expr: max by (aws_account_id, aws_region, dbidentifier) (rds_replica_lag_seconds{}) > 300
