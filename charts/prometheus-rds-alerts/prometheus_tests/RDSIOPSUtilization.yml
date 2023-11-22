@@ -1,0 +1,44 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: RDSIOPSUtilization
+      interval: 1m
+      input_series:
+          - series: 'rds_read_iops_average{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1"}'
+            values: 500x10
+          - series: 'rds_write_iops_average{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1"}'
+            values: 500x10
+          - series: 'rds_max_disk_iops_average{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1"}'
+            values: 1000x10
+          - series: 'rds_read_iops_average{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db2"}'
+            values: 400x10
+          - series: 'rds_write_iops_average{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db2"}'
+            values: 500x10
+          - series: 'rds_max_disk_iops_average{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db2"}'
+            values: 1000x10
+      alert_rule_test:
+          - alertname: RDSIOPSUtilization
+            eval_time: 10m
+            exp_alerts:
+                - exp_labels:
+                      aws_account_id: 111111111111
+                      aws_region: eu-west-3
+                      dbidentifier: db1
+                      severity: warning
+                  exp_annotations:
+                      description: "db1 uses 100% of its disk IOPS"
+                      summary: "db1 is close from its max allocated IOPS"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSIOPSUtilization"
+                - exp_labels:
+                      aws_account_id: 111111111111
+                      aws_region: eu-west-3
+                      dbidentifier: db2
+                      severity: warning
+                  exp_annotations:
+                      description: "db2 uses 90% of its disk IOPS"
+                      summary: "db2 is close from its max allocated IOPS"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSIOPSUtilization"

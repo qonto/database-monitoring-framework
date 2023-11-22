@@ -1,0 +1,20 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: RDSExporterMissingMetrics
+      interval: 1m
+      input_series: []
+      alert_rule_test:
+          - alertname: RDSExporterMissingMetrics
+            eval_time: 10m
+            exp_alerts:
+                - exp_labels:
+                      severity: critical
+                  exp_annotations:
+                      summary: "Prometheus RDS exporter metrics are missing"
+                      description: "No metrics found for Prometheus RDS exporter"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSExporterMissingMetrics"

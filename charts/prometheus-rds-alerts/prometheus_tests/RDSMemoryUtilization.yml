@@ -1,0 +1,29 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: RDSMemoryUtilization
+      interval: 1m
+      input_series:
+          - series: 'rds_instance_info{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1",instance_class="t3.xlarge"}'
+            values: 1x10
+          - series: 'rds_instance_memory_bytes{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1",instance_class="t3.xlarge"}'
+            values: 17179869184x10  # 16GB
+          - series: 'rds_freeable_memory_bytes{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1"}'
+            values: 1073741824x10  # 1GB
+      alert_rule_test:
+          - alertname: RDSMemoryUtilization
+            eval_time: 10m
+            exp_alerts:
+                - exp_labels:
+                      aws_account_id: 111111111111
+                      aws_region: eu-west-3
+                      dbidentifier: db1
+                      severity: warning
+                  exp_annotations:
+                      description: "db1 has 6% free memory"
+                      summary: "RDS instance db1 low available memory"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSMemoryUtilization"

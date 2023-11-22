@@ -1,0 +1,28 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: RDSQuotaStorageLimit
+      interval: 1m
+      input_series:
+          - series: 'rds_allocated_storage_bytes{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1"}'
+            values: '15032385536x10'  # 15 GB
+          - series: 'rds_allocated_storage_bytes{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db2"}'
+            values: '15032385536x10'  # 15 GB
+          - series: 'rds_quota_total_storage_bytes{aws_account_id="111111111111",aws_region="eu-west-3"}'
+            values: '32212254720x10'  # 30GB
+      alert_rule_test:
+          - alertname: RDSQuotaStorageLimit
+            eval_time: 10m
+            exp_alerts:
+                - exp_labels:
+                      aws_account_id: 111111111111
+                      aws_region: eu-west-3
+                      severity: warning
+                  exp_annotations:
+                      description: "Using 93% of allowed RDS storage in 111111111111:eu-west-3"
+                      summary: "The total of RDS storage is close from the AWS quota limit"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSQuotaStorageLimit"

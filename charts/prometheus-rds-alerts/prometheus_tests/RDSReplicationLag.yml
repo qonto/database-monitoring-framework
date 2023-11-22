@@ -1,0 +1,25 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: RDSReplicationLag
+      interval: 1m
+      input_series:
+          - series: 'rds_replica_lag_seconds{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1"}'
+            values: 630  # 10.3 minutes
+      alert_rule_test:
+          - alertname: RDSReplicationLag
+            eval_time: 5m
+            exp_alerts:
+                - exp_labels:
+                      aws_account_id: 111111111111
+                      aws_region: eu-west-3
+                      dbidentifier: db1
+                      severity: warning
+                  exp_annotations:
+                      description: "db1 has 10m 30s lag"
+                      summary: "db1 has high replication lag"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSReplicationLag"

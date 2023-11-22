@@ -1,0 +1,25 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: RDSPostgreSQLMaximumUsedTransaction
+      interval: 1m
+      input_series:
+          - series: 'rds_maximum_used_transaction_ids_average{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1"}'
+            values: '5583457484x10'
+      alert_rule_test:
+          - alertname: RDSPostgreSQLMaximumUsedTransaction
+            eval_time: 10m
+            exp_alerts:
+                - exp_labels:
+                      aws_account_id: 111111111111
+                      aws_region: eu-west-3
+                      dbidentifier: db1
+                      severity: critical
+                  exp_annotations:
+                      description: "db1 is using 5.583457484e+09 transaction IDs on 4 billions hard limit"
+                      summary: "db1 is close to the maximum transactions hard limit"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSPostgreSQLMaximumUsedTransaction"
