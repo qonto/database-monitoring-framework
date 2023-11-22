@@ -161,7 +161,7 @@ rules:
       severity: warning
     annotations:
       summary: "The total of RDS storage is close from the AWS quota limit"
-      description: 'Using {{ printf "%.2g" $value }}% of allowed RDS storage in {{ $labels.aws_account_id}}:{{ $labels.aws_region }}'
+      description: 'Using {{ printf "%.0f" $value }}% of allowed RDS storage in {{ $labels.aws_account_id}}:{{ $labels.aws_region }}'
 
   RDSUnappliedParameters:
     expr: max by (aws_account_id, aws_region, dbidentifier) (rds_instance_info{pending_modified_values="true"}) > 0
