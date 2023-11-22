@@ -30,7 +30,7 @@ rules:
 
   RDSExporterErrors:
     expr: increase(rds_exporter_errors_total[5m]) > 1
-    for: 10m
+    for: 9m
     labels:
       severity: warning
     annotations:
