@@ -1,6 +1,8 @@
 global:
   additionalRuleLabels: {}
 
+format: PrometheusRuleCRD
+
 defaultRunbookUrl: https://qonto.github.io/database-monitoring-framework/{{chartVersion}}/runbooks/postgresql/{{alertName}}
 rulesGroupName: postgresql.rules
 

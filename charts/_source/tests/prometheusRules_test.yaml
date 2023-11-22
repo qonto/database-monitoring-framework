@@ -1,9 +1,9 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
 suite: prometheus rules tests
-templates:
-  - prometheusRules.yaml
 tests:
   - it: render default deployment
+    templates:
+      - prometheusRules.yaml
     values:
       - ./values/with_rules.yaml
     asserts:
@@ -34,7 +34,41 @@ tests:
       - lengthEqual:
           path: spec.groups[0].rules
           count: 2
+  - it: render to Prometheus configuration file format
+    templates:
+      - prometheusConfiguration.yaml
+    values:
+      - ./values/with_rules.yaml
+      - ./values/with_PrometheusConfigurationFileFormat.yaml
+    asserts:
+      - equal:
+          path: groups[0].name
+          value: unittest
+      - equal:
+          path: groups[0].rules[0].alert
+          value: Rule1
+      - equal:
+          path: groups[0].rules[0].expr
+          value: |
+            metric1{} > 42
+      - equal:
+          path: groups[0].rules[0].for
+          value: 10m
+      - equal:
+          path: groups[0].rules[0].labels.priority
+          value: P1
+      - equal:
+          path: groups[0].rules[0].annotations.summary
+          value: "Metric 1 is over 42"
+      - equal:
+          path: groups[0].rules[0].annotations.runbook_url
+          value: https://acme.com/runbooks/0.0.0/Rule1.md
+      - lengthEqual:
+          path: groups[0].rules
+          count: 2
   - it: render with global additional labels on expression
+    templates:
+      - prometheusRules.yaml
     values:
       - ./values/with_rules.yaml
       - ./values/with_globalAdditionalExprLabels.yaml
@@ -44,6 +78,8 @@ tests:
           value: |
             metric1{environment=production,} > 42
   - it: render with global additional labels on rules
+    templates:
+      - prometheusRules.yaml
     values:
       - ./values/with_rules.yaml
       - ./values/with_globalAdditionalRuleLabels.yaml
@@ -52,6 +88,8 @@ tests:
           path: spec.groups[0].rules[0].labels.team
           value: sre
   - it: render with global additional labels on rules
+    templates:
+      - prometheusRules.yaml
     values:
       - ./values/with_rules.yaml
       - ./values/with_low_priority.yaml
@@ -60,6 +98,8 @@ tests:
           path: spec.groups[0].rules[0].labels.priority
           value: P3
   - it: render with additional additionalPrometheusRuleLabels
+    templates:
+      - prometheusRules.yaml
     values:
       - ./values/with_additionalPrometheusRuleLabels.yaml
     asserts:
