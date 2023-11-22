@@ -144,7 +144,7 @@ rules:
       severity: warning
     annotations:
       summary: "The number of RDS instances is close to the maximum quota"
-      description: 'Using {{ printf "%.2g" $value }}% of allowed RDS instances in {{ $labels.aws_account_id}}:{{ $labels.aws_region }}'
+      description: 'Using {{ printf "%.0f" $value }}% of allowed RDS instances in {{ $labels.aws_account_id}}:{{ $labels.aws_region }}'
 
   RDSQuotaStorageLimit:
     expr: |
