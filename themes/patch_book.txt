@@ -1,0 +1,22 @@
+--- themes/book/assets/search.js	2023-11-23 16:41:11
++++ themes/book/assets/search.js	2023-11-23 16:41:08
+@@ -5,7 +5,7 @@
+ {{ $searchConfig := i18n "bookSearchConfig" | default "{}" }}
+
+ (function () {
+-  const searchDataURL = '{{ $searchData.RelPermalink }}';
++  const searchDataURL = '{{ $searchData.Permalink }}';
+   const indexConfig = Object.assign({{ $searchConfig }}, {
+     doc: {
+       id: 'id',
+--- themes/book/assets/search-data.json 2023-11-23 17:13:03
++++ themes/book/assets/search-data.json 2023-11-23 17:13:08
+@@ -8,7 +8,7 @@
+ {{ range $index, $page := $pages }}
+ {{ if gt $index 0}},{{end}} {
+     "id": {{ $index }},
+-    "href": "{{ $page.RelPermalink }}",
++    "href": "{{ $page.Permalink }}",
+     "title": {{ (partial "docs/title" $page) | jsonify }},
+     "section": {{ (partial "docs/title" $page.Parent) | jsonify }},
+     "content": {{ $page.Plain | jsonify }}
