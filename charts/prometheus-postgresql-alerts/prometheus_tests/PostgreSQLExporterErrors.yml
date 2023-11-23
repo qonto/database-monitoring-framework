@@ -1,0 +1,23 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: PostgreSQLExporterErrors
+      interval: 1m
+      input_series:
+          - series: 'pg_exporter_last_scrape_error{job="postgresql-exporter"}'
+            values: 1+1x10
+      alert_rule_test:
+          - alertname: PostgreSQLExporterErrors
+            eval_time: 5m
+            exp_alerts:
+                - exp_labels:
+                      job: postgresql-exporter
+                      severity: critical
+                  exp_annotations:
+                      summary: "Exporter is reporting scraping errors"
+                      description: "postgresql-exporter is reporting scraping errors. Some metrics are not collected anymore"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/postgresql/PostgreSQLExporterErrors"

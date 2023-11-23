@@ -54,8 +54,8 @@ rules:
     labels:
       severity: warning
     annotations:
-      summary: "{{ $labels.server }} is close from the maximum database connections"
-      description: '{{ $labels.server }} uses {{ printf "%.2g" $value }}% of database connections'
+      summary: "{{ $labels.server | stripDomain | stripPort }} is close from the maximum database connections"
+      description: '{{ $labels.server | stripDomain | stripPort }} uses {{ printf "%.2g" $value }}% of the maximum database connections'
 
   PostgreSQLReplicationSlotStorageLimit:
     expr: max by (server, slot_name) (pg_replication_slots_available_storage_percent{}) < 20
@@ -64,7 +64,7 @@ rules:
       severity: warning
     annotations:
       summary: "{{ $labels.slot_name }} on {{ $labels.server | stripDomain | stripPort }} is close to its storage limit"
-      description: '{{ $labels.slot_name }} uses {{ printf "%.2g" $value }}% of its storage limit'
+      description: '{{ $labels.slot_name }} has {{ printf "%.2g" $value }}% free disk storage space'
 
   PostgreSQLInactiveLogicalReplicationSlot:
     expr: max by (server, slot_name) (pg_replication_slots_active{slot_type="logical"}) < 1
@@ -85,12 +85,12 @@ rules:
       description: "{{ $labels.slot_name }} on {{ $labels.server | stripDomain | stripPort }} is inactive"
 
   PostgreSQLLongRunningQuery:
-    expr: max by (server, datname, usename) (pg_active_backend_duration_minutes{usename!=""}) > 30
+    expr: max by (server, datname, usename, pid) (pg_active_backend_duration_minutes{usename!=""}) > 30
     for: 1m
     labels:
       severity: warning
     annotations:
-      summary: "Long running query on {{ $labels.datname }} of {{ $labels.server | stripPort }}."
+      summary: "Long running query on {{ $labels.datname }} of {{ $labels.server | stripDomain | stripPort }}"
       description: "{{ $labels.usename }} is running a long query on {{ $labels.datname }} of {{ $labels.server | stripDomain | stripPort }} with pid {{ $labels.pid }}"
     pintComments:
       - disable promql/series
@@ -102,6 +102,6 @@ rules:
       severity: warning
     annotations:
       summary: "{{ $labels.indexrelname }} is invalid"
-      description: "{{ $labels.indexrelname }} of {{ $labels.relname }} table on {{ $labels.datname }} database on {{ $labels.server }} is invalid"
+      description: "{{ $labels.indexrelname }} of {{ $labels.relname }} table on {{ $labels.datname }} database on {{ $labels.cluster }} is invalid"
     pintComments:
       - disable promql/series

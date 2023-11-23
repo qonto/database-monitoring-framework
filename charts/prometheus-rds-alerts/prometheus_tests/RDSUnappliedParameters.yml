@@ -1,0 +1,25 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: RDSUnappliedParameters
+      interval: 1m
+      input_series:
+          - series: 'rds_instance_info{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1",pending_modified_values="true"}'
+            values: 1x60
+      alert_rule_test:
+          - alertname: RDSUnappliedParameters
+            eval_time: 1h
+            exp_alerts:
+                - exp_labels:
+                      aws_account_id: 111111111111
+                      aws_region: eu-west-3
+                      dbidentifier: db1
+                      severity: warning
+                  exp_annotations:
+                      description: "db1 has unapplied parameters"
+                      summary: "Instance has unapplied parameters"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSUnappliedParameters"

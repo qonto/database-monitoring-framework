@@ -68,3 +68,20 @@ jobs:
 
       - name: Run Kubeconform test
         run: make kubeconform-test
+
+  prometheus-rules:
+    name: prometheus-rules
+    runs-on: ubuntu-latest
+    env:
+      PROMETHEUS_VERSION: 2.48.0
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Promtool (Prometheus)
+        run: |
+          curl -sSLo /tmp/prometheus.tar.gz "https://github.com/prometheus/prometheus/releases/download/v${PROMETHEUS_VERSION}/prometheus-${PROMETHEUS_VERSION}.linux-amd64.tar.gz" \
+          && tar -C /tmp -xzvf /tmp/prometheus.tar.gz \
+          && cp /tmp/prometheus-${PROMETHEUS_VERSION}.linux-amd64/promtool /usr/local/bin/promtool
+
+      - name: Prometheus test
+        run: make prometheus-test

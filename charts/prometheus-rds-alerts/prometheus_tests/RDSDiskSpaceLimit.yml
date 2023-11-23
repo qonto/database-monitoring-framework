@@ -1,0 +1,27 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: RDSDiskSpaceLimit
+      interval: 1m
+      input_series:
+          - series: 'rds_free_storage_bytes{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1"}'
+            values: '1073741824x10'  # 1GB
+          - series: 'rds_allocated_storage_bytes{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1"}'
+            values: '21474836480x15'  # 20GB
+      alert_rule_test:
+          - alertname: RDSDiskSpaceLimit
+            eval_time: 15m
+            exp_alerts:
+                - exp_labels:
+                      aws_account_id: 111111111111
+                      aws_region: eu-west-3
+                      dbidentifier: db1
+                      severity: warning
+                  exp_annotations:
+                      description: "db1 has 5% free disk space"
+                      summary: "Low free disk space"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSDiskSpaceLimit"

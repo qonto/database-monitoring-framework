@@ -1,0 +1,24 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: PostgreSQLInactiveLogicalReplicationSlot
+      interval: 1m
+      input_series:
+          - series: 'pg_replication_slots_active{slot_type="logical", server="db1.unittest.eu-west-3.rds.amazonaws.com:5432", slot_name="unittest"}'
+            values: 0x10
+      alert_rule_test:
+          - alertname: PostgreSQLInactiveLogicalReplicationSlot
+            eval_time: 10m
+            exp_alerts:
+                - exp_labels:
+                      server: db1.unittest.eu-west-3.rds.amazonaws.com:5432
+                      slot_name: unittest
+                      severity: warning
+                  exp_annotations:
+                      summary: "Logical replication slot is inactive"
+                      description: "unittest on db1 is inactive"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/postgresql/PostgreSQLInactiveLogicalReplicationSlot"

@@ -30,7 +30,7 @@ rules:
 
   RDSExporterErrors:
     expr: increase(rds_exporter_errors_total[5m]) > 1
-    for: 10m
+    for: 9m
     labels:
       severity: warning
     annotations:
@@ -48,7 +48,7 @@ rules:
 
   RDSDiskSpacePrediction:
     expr: predict_linear(min by (aws_account_id, aws_region, dbidentifier) (rds_free_storage_bytes{})[30m:], 3600 * 4) < 1
-    for: 15m
+    for: 10m
     labels:
       severity: critical
     annotations:
@@ -100,7 +100,7 @@ rules:
       severity: warning
     annotations:
       summary: "RDS instance {{ $labels.dbidentifier }} low available memory"
-      description: '{{ $labels.dbidentifier }} used {{ printf "%.2g" $value }}% of its max memory'
+      description: '{{ $labels.dbidentifier }} has {{ printf "%.0f" $value }}% free memory'
 
   RDSSwapUtilization:
     expr: max by (aws_account_id, aws_region, dbidentifier) (delta(rds_swap_usage_bytes{}[1h])) / 1024 / 1024 >= 20
@@ -118,7 +118,7 @@ rules:
       severity: warning
     annotations:
       summary: "{{ $labels.dbidentifier }} is close from its max allocated IOPS"
-      description: '{{ $labels.dbidentifier }} uses {{ printf "%.2g" $value }}% of its disk IOPS'
+      description: '{{ $labels.dbidentifier }} uses {{ printf "%.0f" $value }}% of its disk IOPS'
 
   RDSReplicationLag:
     expr: max by (aws_account_id, aws_region, dbidentifier) (rds_replica_lag_seconds{}) > 300
@@ -144,7 +144,7 @@ rules:
       severity: warning
     annotations:
       summary: "The number of RDS instances is close to the maximum quota"
-      description: 'Using {{ printf "%.2g" $value }}% of allowed RDS instances in {{ $labels.aws_account_id}}:{{ $labels.aws_region }}'
+      description: 'Using {{ printf "%.0f" $value }}% of allowed RDS instances in {{ $labels.aws_account_id}}:{{ $labels.aws_region }}'
 
   RDSQuotaStorageLimit:
     expr: |
@@ -161,7 +161,7 @@ rules:
       severity: warning
     annotations:
       summary: "The total of RDS storage is close from the AWS quota limit"
-      description: 'Using {{ printf "%.2g" $value }}% of allowed RDS storage in {{ $labels.aws_account_id}}:{{ $labels.aws_region }}'
+      description: 'Using {{ printf "%.0f" $value }}% of allowed RDS storage in {{ $labels.aws_account_id}}:{{ $labels.aws_region }}'
 
   RDSUnappliedParameters:
     expr: max by (aws_account_id, aws_region, dbidentifier) (rds_instance_info{pending_modified_values="true"}) > 0

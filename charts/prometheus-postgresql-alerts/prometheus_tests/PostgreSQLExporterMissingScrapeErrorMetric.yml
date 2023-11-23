@@ -1,0 +1,20 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: PostgreSQLExporterMissingScrapeErrorMetric
+      interval: 1m
+      input_series: []
+      alert_rule_test:
+          - alertname: PostgreSQLExporterMissingScrapeErrorMetric
+            eval_time: 5m
+            exp_alerts:
+                - exp_labels:
+                      severity: critical
+                  exp_annotations:
+                      summary: "PostgreSQL exporter last scrape error metric is missing"
+                      description: "PostgreSQL exporter last scrape error metric is missing. Either the exporter is down or some metrics are not collected anymore"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/postgresql/PostgreSQLExporterMissingScrapeErrorMetric"

@@ -1,0 +1,34 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: RDSQuotaInstanceLimit
+      interval: 1m
+      input_series:
+          - series: 'rds_instance_info{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1"}'
+            values: '1x10'
+          - series: 'rds_instance_info{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db2"}'
+            values: '1x10'
+          - series: 'rds_instance_info{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db3"}'
+            values: '1x10'
+          - series: 'rds_instance_info{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db4"}'
+            values: '1x10'
+          - series: 'rds_instance_info{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db5"}'
+            values: '1x10'
+          - series: 'rds_quota_max_dbinstances_average{aws_account_id="111111111111",aws_region="eu-west-3"}'
+            values: '6x10'
+      alert_rule_test:
+          - alertname: RDSQuotaInstanceLimit
+            eval_time: 10m
+            exp_alerts:
+                - exp_labels:
+                      aws_account_id: 111111111111
+                      aws_region: eu-west-3
+                      severity: warning
+                  exp_annotations:
+                      description: "Using 83% of allowed RDS instances in 111111111111:eu-west-3"
+                      summary: "The number of RDS instances is close to the maximum quota"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSQuotaInstanceLimit"

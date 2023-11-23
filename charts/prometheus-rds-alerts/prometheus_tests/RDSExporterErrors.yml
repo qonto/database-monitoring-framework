@@ -1,0 +1,23 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: RDSExporterErrors
+      interval: 1m
+      input_series:
+          - series: 'rds_exporter_errors_total{instance="localhost:9043"}'
+            values: 1+1x10
+      alert_rule_test:
+          - alertname: RDSExporterErrors
+            eval_time: 10m
+            exp_alerts:
+                - exp_labels:
+                      instance: localhost:9043
+                      severity: warning
+                  exp_annotations:
+                      summary: "localhost:9043 is reporting errors"
+                      description: "localhost:9043 is reporting 5 errors per minute"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSExporterErrors"

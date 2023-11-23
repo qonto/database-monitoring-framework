@@ -18,6 +18,7 @@ We use :
 
 * [`pre-commit`](https://pre-commit.com) to have style consistency in runbooks.
 * [`markdownlint-cli2`](https://github.com/DavidAnson/markdownlint-cli2) for linting the Markdown document. If you think the linter is incorrect, look at [configuration](https://github.com/DavidAnson/markdownlint/blob/main/README.md#configuration) to ignore the line.
+* [`promtool`](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/#syntax-checking-rules) to check Prometheus rules
 * Gitlab workflows to run tests
 
 ## Pull Request Checklist
@@ -77,12 +78,20 @@ To have Hugo templates resolution, we recommend to edit pages using Hugo webserv
 
 ## Run tests
 
+Requirements
+
+* `promtool` to run prometheus test (`brew install prometheus`)
+* `kubeconform` (`brew install kubeconform`)
+
+Steps
+
 `make all-tests` run all tests, but you can run them manually:
 
 ```bash
 make helm-test # Helm unit tests
 make kubeconform-test # Check Helm charts render valid Kubernetes manifests
 make runbook-test # Test runbooks
+make prometheus-test # Test Prometheus alerts
 ```
 
 Tests on SQL queries (files with `.sql` extension) are tested accross a PostgreSQL instance and need to be launched manually.
@@ -145,6 +154,8 @@ Any runboks:
       annotations:
         message: "<comprehensive description of the alert>"
     ```
+
+1. Add [Prometheus unittest](https://prometheus.io/docs/prometheus/latest/configuration/unit_testing_rules/) in `chart/prometheus-<component>-alerts/prometheus_tests/<alertName>.yml`
 
 1. Run tests
 

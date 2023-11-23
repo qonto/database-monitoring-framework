@@ -1,0 +1,26 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: PostgreSQLInvalidIndex
+      interval: 1m
+      input_series:
+          - series: 'pg_stat_user_indexes_idx_blks_hit{cluster="db1", datname="unittest", relname="test", indexrelname="idx_id", indisvalid="false"}'
+            values: 1x60
+      alert_rule_test:
+          - alertname: PostgreSQLInvalidIndex
+            eval_time: 1h
+            exp_alerts:
+                - exp_labels:
+                      cluster: db1
+                      datname: unittest
+                      relname: test
+                      indexrelname: idx_id
+                      severity: warning
+                  exp_annotations:
+                      summary: "idx_id is invalid"
+                      description: "idx_id of test table on unittest database on db1 is invalid"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/postgresql/PostgreSQLInvalidIndex"

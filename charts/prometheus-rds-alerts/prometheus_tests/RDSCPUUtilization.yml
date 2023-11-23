@@ -1,0 +1,25 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: RDSCPUUtilization
+      interval: 1m
+      input_series:
+          - series: 'rds_cpu_usage_percent_average{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1"}'
+            values: '90x10'
+      alert_rule_test:
+          - alertname: RDSCPUUtilization
+            eval_time: 10m
+            exp_alerts:
+                - exp_labels:
+                      aws_account_id: 111111111111
+                      aws_region: eu-west-3
+                      dbidentifier: db1
+                      severity: warning
+                  exp_annotations:
+                      description: "db1 has 90% CPU used"
+                      summary: "db1 has high CPU utilization"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSCPUUtilization"

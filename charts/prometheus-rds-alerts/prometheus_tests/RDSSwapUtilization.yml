@@ -1,0 +1,25 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: RDSSwapUtilization
+      interval: 1m
+      input_series:
+          - series: 'rds_swap_usage_bytes{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1",instance_class="t3.xlarge"}'
+            values: 10485760+10485760x10
+      alert_rule_test:
+          - alertname: RDSSwapUtilization
+            eval_time: 10m
+            exp_alerts:
+                - exp_labels:
+                      aws_account_id: 111111111111
+                      aws_region: eu-west-3
+                      dbidentifier: db1
+                      severity: warning
+                  exp_annotations:
+                      description: "db1 use 105 MB of SWAP"
+                      summary: "db1 SWAP utilization is high"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSSwapUtilization"

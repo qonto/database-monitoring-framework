@@ -1,0 +1,24 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: PostgreSQLReplicationSlotStorageLimit
+      interval: 1m
+      input_series:
+          - series: 'pg_replication_slots_available_storage_percent{server="db1.unittest.eu-west-3.rds.amazonaws.com:5432",slot_name="unittest"}'
+            values: 15.8x10
+      alert_rule_test:
+          - alertname: PostgreSQLReplicationSlotStorageLimit
+            eval_time: 5m
+            exp_alerts:
+                - exp_labels:
+                      server: db1.unittest.eu-west-3.rds.amazonaws.com:5432
+                      slot_name: unittest
+                      severity: warning
+                  exp_annotations:
+                      summary: "unittest on db1 is close to its storage limit"
+                      description: "unittest has 16% free disk storage space"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/postgresql/PostgreSQLReplicationSlotStorageLimit"
