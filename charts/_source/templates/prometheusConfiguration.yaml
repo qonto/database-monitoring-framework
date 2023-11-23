@@ -1,0 +1,14 @@
+{{- if eq .Values.format "PrometheusConfigurationFile" }}
+groups:
+  - name: {{ $.Values.rulesGroupName }}
+    rules:
+{{- range $name, $val := .Values.rules }}
+{{- $_ := set . "name" $name }}
+{{- $_ := set . "globalAdditionalExprLabels" $.Values.global.additionalExprLabels }}
+{{- $_ := set . "globalAdditionalRuleLabels" $.Values.global.additionalRuleLabels }}
+{{- $_ := set . "defaultRunbookUrl" $.Values.defaultRunbookUrl }}
+{{- $_ := set . "chartVersion" $.Chart.Version }}
+
+{{- include "chart.renderPrometheusRule" . | indent 8 -}}
+{{- end }}
+{{- end }}

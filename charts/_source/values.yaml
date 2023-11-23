@@ -2,6 +2,8 @@ global:
   additionalExprLabels: []
   additionalRuleLabels: {}
 
+format: PrometheusRuleCRD
+
 rulesGroupName: default
 
 rules: {}
