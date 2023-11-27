@@ -1,0 +1,41 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: RDSCACertificateCloseToExpiration
+      interval: 1d
+      input_series:
+          - series: 'rds_certificate_expiry_timestamp_seconds{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1"}'
+            values: '1728000x40' # 1728000 seconds = 20 days
+          - series: 'rds_certificate_expiry_timestamp_seconds{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db2"}'
+            values: '2629800x40' # 2629800 seconds = 1 month
+          - series: 'rds_certificate_expiry_timestamp_seconds{aws_account_id="111111111111",aws_region="eu-west-1",dbidentifier="db1"}'
+            values: '1728000x40' # 1728000 seconds = 20 days
+          - series: 'rds_certificate_expiry_timestamp_seconds{aws_account_id="222222222222",aws_region="eu-west-3",dbidentifier="db1"}'
+            values: '2629800x40' # 2629800 seconds = 1 month
+      alert_rule_test:
+          - alertname: RDSCACertificateCloseToExpiration
+            eval_time: 4d
+            exp_alerts: []
+          - alertname: RDSCACertificateCloseToExpiration
+            eval_time: 6d
+            exp_alerts:
+                - exp_labels:
+                      aws_account_id: 111111111111
+                      aws_region: eu-west-3
+                      severity: warning
+                  exp_annotations:
+                      description: "1 instance(s) of the AWS account ID=111111111111 in region=eu-west-3 use(s) a certificate with an expiration date inferior to 15 days"
+                      summary: "RDS instance(s) use(s) a certificate with an expiration date inferior to 15 days"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSCACertificateCloseToExpiration"
+                - exp_labels:
+                      aws_account_id: 111111111111
+                      aws_region: eu-west-1
+                      severity: warning
+                  exp_annotations:
+                      description: "1 instance(s) of the AWS account ID=111111111111 in region=eu-west-1 use(s) a certificate with an expiration date inferior to 15 days"
+                      summary: "RDS instance(s) use(s) a certificate with an expiration date inferior to 15 days"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSCACertificateCloseToExpiration"
