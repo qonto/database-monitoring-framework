@@ -184,3 +184,13 @@ rules:
       description: "{{ $labels.dbidentifier }} has forced maintenance"
     pintComments:
       - disable promql/series
+
+  RDSCACertificateCloseToExpiration:
+    expr: |
+      # 1296000 seconds = 15 days
+      count by (aws_account_id, aws_region) (rds_certificate_expiry_timestamp_seconds - time() <= 1296000) > 0
+    labels:
+      severity: warning
+    annotations:
+      summary: "RDS instance(s) use(s) a certificate with an expiration date inferior to 15 days"
+      description: "{{ $value }} instance(s) of the AWS account ID={{ $labels.aws_account_id}} in region={{ $labels.aws_region }} use(s) a certificate with an expiration date inferior to 15 days"
