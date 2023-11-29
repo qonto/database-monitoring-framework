@@ -31,7 +31,7 @@ RDS parameter groups have `dynamic` and `static` parameters:
 
 1. Check instance status
 
-    If instance is in `creating` status, the parameter group should be applied automatically by AWS in few minutes.
+    If the instance is in `creating` status, the parameter group should be applied automatically by AWS in a few minutes.
 
 1. Identify the RDS parameter group used by the RDS instance
 
@@ -113,8 +113,64 @@ RDS parameter groups have `dynamic` and `static` parameters:
 
 ## Mitigation
 
-- Apply RDS parameter group changes by restarting the RDS instance
+You must restart the RDS instance to fix the `pending-reboot` apply status.
+
+{{< hint warning >}}
+**Important**
+
+The following mitigation measures will restart the RDS instance, resulting in a **momentary outage**. You may consider shutting down the database clients and informing users first.
+{{< /hint >}}
+
+1. Find a suitable time slot to restart the instance
+
+    Reboot operation can't be performed if the instance isn't in the `available` state. Avoid backup maintenance windows.
+
+1. Apply RDS parameter group changes by restarting the RDS instance
+
+    ```bash
+    aws rds reboot-db-instance --no-force-failover --db-instance-identifier ${DB_IDENTIFIER}
+    ```
+
+    This operation is performed asynchronously, it could take several minutes.
+
+    <details>
+    <summary>How to see when the restart occurred?</summary>
+
+    You can monitor the RDS events
+
+    ```bash
+    aws rds describe-events --source-type db-instance --event-categories "availability" --source-identifier ${DB_IDENTIFIER} | jq -r '.Events[] | (.Date + ":" + .Message)'
+    ```
+
+    Example:
+
+    ```bash
+    $ aws rds describe-events --source-type db-instance --event-categories "availability" --source-identifier ${DB_IDENTIFIER} | jq -r '.Events[] | (.Date + ":" + .Message)'
+    2023-11-29T09:51:13.187000+00:00:DB instance restarted
+    ```
+
+    </details>
+
+1. Check parameter group apply status is now `in-sync`.
+
+    ```bash
+    aws rds describe-db-instances --db-instance-identifier ${DB_IDENTIFIER} --query 'DBInstances[0].DBParameterGroups[0]'
+    ```
+
+    <details>
+    <summary>Example</summary>
+
+    ```bash
+    $ aws rds describe-db-instances --db-instance-identifier ${DB_IDENTIFIER} --query 'DBInstances[0].DBParameterGroups[0]'
+    {
+        "DBParameterGroupName": "postgres14-primary",
+        "ParameterApplyStatus": "in-sync"
+    }
+    ```
+
+    </details>
 
 ## Additional resources
 
-- <https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithParamGroups.html>
+- [Working with parameter groups](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithParamGroups.html)
+- [Rebooting a DB instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_RebootInstance.html)
