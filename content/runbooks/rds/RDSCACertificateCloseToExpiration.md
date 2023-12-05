@@ -15,9 +15,9 @@ If the certificate is not renewed before expiration, all attempts to initiate an
 {{< hint warning >}}
 **Important**
 
-The `Amazon RDS Root 2019 CA` certificate expires on **Aug 22 17:08:50 2024 UTC**.
+The `Amazon RDS Root 2019 CA` certificate expires between [May 2024 and October 2024](https://aws.amazon.com/blogs/aws/rotate-your-ssl-tls-certificates-now-amazon-rds-and-amazon-aurora-expire-in-2024/), depending of your AWS region.
 
-- Starting January 25th 2024, RDS instances created without specifying the CA will use `rds-ca-rsa2048-g1``.
+- Starting January 25th 2024, RDS instances created without specifying the CA will use `rds-ca-rsa2048-g1`.
 - In August 2024, AWS will enforce the CA rotation on all RDS instances on the expiring CA during a window maintenance
 {{< /hint >}}
 
