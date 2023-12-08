@@ -82,10 +82,10 @@ rules:
       )
     for: 10m
     labels:
-      severity: critical
+      severity: warning
     annotations:
       summary: "{{ $labels.dbidentifier }} has high non CPU utilization"
-      description: "{{ $labels.dbidentifier }} has {{ $value }} non CPU wait"
+      description: '{{ $labels.dbidentifier }} has {{ printf "%.0f" $value }} queries waiting for a reason other than the CPU'
 
   RDSMemoryUtilization:
     expr: |

@@ -22,7 +22,7 @@ tests:
                       aws_account_id: 111111111111
                       aws_region: eu-west-3
                       dbidentifier: db1
-                      severity: critical
+                      severity: warning
                   exp_annotations:
                       description: "db1 has 20 non CPU wait"
                       summary: "db1 has high non CPU utilization"
