@@ -200,28 +200,12 @@ pg_stat_user_tables:
           pg_indexes_size(pg_class.oid)                  AS index_size,
           pg_total_relation_size(pg_class.reltoastrelid) AS toast_size
         FROM
-          pg_stat_user_tables u
-        JOIN pg_class ON pg_class.oid = u.relid AND pg_class.relkind <> 'm' -- exclude matviews to prevent query being locked when refreshing MV
-      UNION ALL
-        SELECT
-          c.oid,
-          SUM(c.relpages::bigint*8192) AS table_size,
-          coalesce(SUM(idx.index_bytes),0) as index_size,
-          coalesce(SUM((c2.relpages+c3.relpages)::bigint*8192),0) AS toast_size
-        FROM pg_stat_user_tables u
-        JOIN pg_class c ON u.relid=c.oid AND c.relkind='m'   -- matviews only
-          LEFT JOIN pg_class c2 ON c2.oid = c.reltoastrelid
-          LEFT JOIN pg_index it ON it.indrelid=c.reltoastrelid  -- only one index per pg_toast table
-          LEFT JOIN pg_class c3 ON c3.oid=it.indexrelid
-          CROSS JOIN LATERAL (
-            SELECT SUM(c4.relpages::bigint*8192) AS index_bytes
-            FROM pg_index i JOIN pg_class c4 ON i.indrelid=c.oid AND c4.oid=i.indexrelid
-          ) idx
-        GROUP BY c.oid
+          pg_stat_user_tables ut
+        JOIN pg_class ON pg_class.oid = ut.relid
+        WHERE NOT EXISTS (
+            SELECT 1 FROM pg_locks WHERE pg_locks.relation = ut.relid AND pg_locks.mode = 'AccessExclusiveLock'
+        )
       ) t ON u.relid = t.oid
-    WHERE NOT EXISTS (
-      SELECT 1 FROM pg_locks WHERE pg_locks.relation = u.relid AND pg_locks.mode = 'AccessExclusiveLock'
-    )
     ;
   metrics:
     - datname:
