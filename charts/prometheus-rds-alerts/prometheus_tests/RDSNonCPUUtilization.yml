@@ -24,6 +24,6 @@ tests:
                       dbidentifier: db1
                       severity: warning
                   exp_annotations:
-                      description: "db1 has 20 non CPU wait"
+                      description: "db1 has 20 queries waiting for a reason other than the CPU"
                       summary: "db1 has high non CPU utilization"
                       runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSNonCPUUtilization"
