@@ -219,6 +219,9 @@ pg_stat_user_tables:
           ) idx
         GROUP BY c.oid
       ) t ON u.relid = t.oid
+    WHERE NOT EXISTS (
+      SELECT 1 FROM pg_locks WHERE pg_locks.relation = u.relid AND pg_locks.mode = 'AccessExclusiveLock'
+    )
     ;
   metrics:
     - datname:
