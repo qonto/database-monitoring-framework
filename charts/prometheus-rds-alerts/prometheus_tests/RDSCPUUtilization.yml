@@ -8,7 +8,7 @@ tests:
       interval: 1m
       input_series:
           - series: 'rds_cpu_usage_percent_average{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1"}'
-            values: "90.012345"
+            values: 90.012345
       alert_rule_test:
           - alertname: RDSCPUUtilization
             eval_time: 10m
