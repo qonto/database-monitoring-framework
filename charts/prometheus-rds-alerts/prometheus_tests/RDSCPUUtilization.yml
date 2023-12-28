@@ -8,7 +8,7 @@ tests:
       interval: 1m
       input_series:
           - series: 'rds_cpu_usage_percent_average{aws_account_id="111111111111",aws_region="eu-west-3",dbidentifier="db1"}'
-            values: "90x10"
+            values: "90.012345"
       alert_rule_test:
           - alertname: RDSCPUUtilization
             eval_time: 10m
@@ -19,6 +19,6 @@ tests:
                       dbidentifier: db1
                       severity: critical
                   exp_annotations:
-                      description: "db1 has 90% CPU used"
+                      description: "db1 has 90.01% CPU used"
                       summary: "db1 has high CPU utilization"
                       runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/rds/RDSCPUUtilization"
