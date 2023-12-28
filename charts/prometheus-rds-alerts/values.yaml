@@ -9,7 +9,6 @@ rulesGroupName: rds.rules
 additionalPrometheusRuleLabels: {}
 
 rules:
-
   RDSExporterMissingMetrics:
     expr: absent(rds_exporter_build_info)
     for: 5m
@@ -68,10 +67,10 @@ rules:
     expr: max by (aws_account_id, aws_region, dbidentifier) (rds_cpu_usage_percent_average) > 85
     for: 10m
     labels:
-      severity: warning
+      severity: critical
     annotations:
       summary: "{{ $labels.dbidentifier }} has high CPU utilization"
-      description: '{{ $labels.dbidentifier }} has {{ printf "%.2g" $value }}% CPU used'
+      description: '{{ $labels.dbidentifier }} has {{ printf "%.2f" $value }}% CPU used'
 
   RDSNonCPUUtilization:
     expr: |
