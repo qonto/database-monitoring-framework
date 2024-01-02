@@ -69,10 +69,33 @@ You must avoid reaching no disk space left situation.
 
 - Increase RDS disk space
 
-    {{< hint warning >}}
+    {{< hint danger >}}
 {{% aws-rds-storage-increase-limitations %}}
 {{< /hint >}}
 
+    1. Determine the minimum storage for the increase
+
+        ```bash
+        INSTANCE_IDENTIFIER=<replace with the RDS instance identifier>
+        ```
+
+        ```bash
+        aws rds describe-db-instances --db-instance-identifier ${INSTANCE_IDENTIFIER} \
+        | jq -r '{"Current IOPS": .DBInstances[0].Iops, "Current Storage Limit": .DBInstances[0].AllocatedStorage, "New minimum storage size": ((.DBInstances[0].AllocatedStorage|tonumber)+(.DBInstances[0].AllocatedStorage|tonumber*0.1|floor))}'
+        ```
+
+    1. Increase storage:
+
+        ```bash
+        NEW_ALLOCATED_STORAGE=<replace with new allocated storage in GB>
+        ```
+
+        ```bash
+        aws rds modify-db-instance --db-instance-identifier ${RDS_INSTANCE} --allocated-storage ${INSTANCE_IDENTIFIER} --apply-immediately \
+        | jq .DBInstance.PendingModifiedValues
+        ```
+
 ## Additional resources
 
-n/a
+- <https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.DBInstance.Modifying.html>
+- <https://docs.aws.amazon.com/cli/latest/reference/rds/modify-db-instance.html>
