@@ -109,3 +109,23 @@ tests:
       - equal:
           path: metadata.labels.prometheus
           value: main
+  - it: render with additional additionalPrometheusRuleLabels
+    templates:
+      - prometheusRules.yaml
+    values:
+      - ./values/with_keepFiringFor.yaml
+    asserts:
+      - equal:
+          path: spec.groups[0].rules[0].expr
+          value: |
+            metric2{} > 100
+      - equal:
+          path: spec.groups[0].rules[0].keep_firing_for
+          value: 2s
+      - equal:
+          path: spec.groups[0].rules[1].expr
+          value: |
+            metric1{} > 42
+      - equal:
+          path: spec.groups[0].rules[1].keep_firing_for
+          value: 1s

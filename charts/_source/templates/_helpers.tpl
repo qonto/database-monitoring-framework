@@ -71,6 +71,7 @@ Render Prometheus rule
 {{- $name := .name -}}
 {{- $pintComments := default dict .pintComments -}}
 {{- $for := .for -}}
+{{- $keepFiringFor := default .defaultKeepFiringFor .keepFiringFor -}}
 {{- $ruleLabels := .labels -}}
 {{- $record := .record -}}
 {{- $annotations := default dict .annotations -}}
@@ -111,6 +112,9 @@ Render Prometheus rule
   {{- end }}
   {{- if $for }}
   for: {{ $for }}
+  {{- end }}
+  {{- if $keepFiringFor }}
+  keep_firing_for: {{ $keepFiringFor }}
   {{- end }}
 {{- if $labels }}
   labels:

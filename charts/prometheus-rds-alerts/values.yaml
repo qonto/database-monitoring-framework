@@ -3,7 +3,9 @@ global:
 
 format: PrometheusRuleCRD
 
+defaultKeepFiringFor: ""
 defaultRunbookUrl: https://qonto.github.io/database-monitoring-framework/{{chartVersion}}/runbooks/rds/{{alertName}}
+
 rulesGroupName: rds.rules
 
 additionalPrometheusRuleLabels: {}

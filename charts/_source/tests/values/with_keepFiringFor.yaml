@@ -1,0 +1,24 @@
+defaultKeepFiringFor: 1s
+
+rulesGroupName: unittest
+
+rules:
+
+  RuleWithDefaultKeepFiringFor:
+    expr: metric1{} > 42
+    for: 10m
+    labels:
+      priority: P1
+    annotations:
+      summary: "Metric 1 is over 42"
+      description: "Metric1 is {{ $value }}"
+
+  RuleWithCustomKeepFiringFor:
+    expr: metric2{} > 100
+    for: 10m
+    keepFiringFor: 2s
+    labels:
+      priority: P1
+    annotations:
+      summary: "Metric 1 is over 100"
+      description: "Metric2 is {{ $value }}"

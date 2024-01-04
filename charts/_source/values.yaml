@@ -2,6 +2,8 @@ global:
   additionalExprLabels: []
   additionalRuleLabels: {}
 
+defaultKeepFiringFor: ""
+
 format: PrometheusRuleCRD
 
 rulesGroupName: default
