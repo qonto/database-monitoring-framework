@@ -28,7 +28,7 @@ PostgreSQL internal events:
 - 40 million transactions before the upper limit is reached, WARNING messages consisting of a countdown will be logged
 - 3 million transactions before the upper limit is reached, PostgreSQL goes to READ-ONLY mode
 
-See https://www.postgresql.org/docs/15/routine-vacuuming.html
+See [official postgresql documentation about routine-vacuuming](www.postgresql.org/docs/15/routine-vacuuming.html)
 </details>
 
 ## Impact

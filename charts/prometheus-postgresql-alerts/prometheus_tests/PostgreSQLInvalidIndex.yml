@@ -8,14 +8,14 @@ tests:
     - name: PostgreSQLInvalidIndex
       interval: 1m
       input_series:
-          - series: 'pg_stat_user_indexes_idx_blks_hit{cluster="db1", datname="unittest", relname="test", indexrelname="idx_id", indisvalid="false"}'
+          - series: 'pg_stat_user_indexes_invalid_index_count{target="db1", datname="unittest", relname="test", indexrelname="idx_id"}'
             values: 1x60
       alert_rule_test:
           - alertname: PostgreSQLInvalidIndex
             eval_time: 1h
             exp_alerts:
                 - exp_labels:
-                      cluster: db1
+                      target: db1
                       datname: unittest
                       relname: test
                       indexrelname: idx_id

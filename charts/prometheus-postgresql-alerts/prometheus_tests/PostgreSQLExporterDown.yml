@@ -8,18 +8,16 @@ tests:
     - name: PostgreSQLExporterDown
       interval: 1m
       input_series:
-          - series: 'up{instance="localhost:9187"}'
+          - series: 'up{service="sql-exporter", target="mydatabase"}'
             values: '0x10'
-          - series: 'postgres_exporter_build_info{instance="localhost:9187"}'
-            values: '1x10'
       alert_rule_test:
           - alertname: PostgreSQLExporterDown
             eval_time: 5m
             exp_alerts:
                 - exp_labels:
-                      instance: localhost:9187
+                      service: sql-exporter
                       severity: critical
                   exp_annotations:
                       summary: "Exporter is down"
-                      description: "localhost:9187 exporter is down"
+                      description: "SQL Exporter is down"
                       runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/postgresql/PostgreSQLExporterDown"

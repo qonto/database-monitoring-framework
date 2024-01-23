@@ -1,16 +1,16 @@
 ---
-title: Exporter down
+title: Exporter target down
 ---
 
-# PostgreSQLExporterDown
+# PostgreSQLExporterMissingTarget
 
 ## Meaning
 
-Alert is triggered when the SQL exporter don't report being up.
+Alert is triggered when a target (an instance or a database) isn't reachable by the SQL exporter. It can be a symptom of an underlying issue.
 
 ## Impact
 
-The monitoring system is degraded. SQL exporter does not collect SQL metrics, alerts cannot be triggered.
+The monitoring system is degraded for this target. SQL exporter does not collect SQL metrics, alerts cannot be triggered.
 
 ## Diagnosis
 
@@ -27,10 +27,6 @@ The PostgreSQL exporter needs `pg_monitor` role and `LOGIN` options.
 1. **Look at PostgreSQL connection logs**
 
     You'll get an error message if PostgreSQL exporter connections are rejected by PostgreSQL.
-
-1. **Check memory usage**
-
-    Sometimes, when target number is too high, the pod can be OOMKilled.
 
 ## Mitigation
 

@@ -8,16 +8,16 @@ tests:
     - name: PostgreSQLExporterScrapingLimit
       interval: 1m
       input_series:
-          - series: 'pg_exporter_last_scrape_duration_seconds{instance="localhost:9187"}'
+          - series: 'scrape_duration_seconds{job="sql-exporter", target=""}'
             values: 40x10
       alert_rule_test:
           - alertname: PostgreSQLExporterScrapingLimit
             eval_time: 5m
             exp_alerts:
                 - exp_labels:
-                      instance: localhost:9187
+                      job: sql-exporter
                       severity: warning
                   exp_annotations:
-                      summary: "Exporter scraping take long time"
-                      description: "localhost:9187 scraping take long time"
+                      summary: "Exporter scraping takes long time"
+                      description: "SQL Exporter scraping is taking a long time"
                       runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/postgresql/PostgreSQLExporterScrapingLimit"
