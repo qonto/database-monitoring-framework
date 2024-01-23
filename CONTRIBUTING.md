@@ -119,7 +119,7 @@ Any alerts:
 
 Any runboks:
 
-* Explains why the alert is raied
+* Explains why the alert is raised
 * Estimates the impact on systems
 * Help to find the root cause
 * Provides guidelines to mitigate the situation
