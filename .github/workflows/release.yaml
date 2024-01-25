@@ -83,7 +83,7 @@ jobs:
 
       - name: Get Helm
         run: |
-          curl -sSLo /tmp/helm.tar.gz "https://get.helm.sh/helm-v3.13.1-linux-amd64.tar.gz" && \
+          curl -sSLo /tmp/helm.tar.gz "https://get.helm.sh/helm-v3.14.0-linux-amd64.tar.gz" && \
           tar --strip-components=1 -C /tmp -xzvf /tmp/helm.tar.gz linux-amd64/helm && \
           mv /tmp/helm /usr/local/bin/helm && \
           rm -f /tmp/helm.tar.gz
@@ -114,7 +114,7 @@ jobs:
 
       - name: Get helm
         run: |
-          curl -sSLo /tmp/helm.tar.gz "https://get.helm.sh/helm-v3.13.1-linux-amd64.tar.gz" && \
+          curl -sSLo /tmp/helm.tar.gz "https://get.helm.sh/helm-v3.14.0-linux-amd64.tar.gz" && \
           tar --strip-components=1 -C /tmp -xzvf /tmp/helm.tar.gz linux-amd64/helm && \
           mv /tmp/helm /usr/local/bin/helm && \
           rm -f /tmp/helm.tar.gz
