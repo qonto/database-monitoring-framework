@@ -19,6 +19,13 @@ This component is optional but highly recommended for AWS customers.
 
 ### Prometheus PostgreSQL exporter
 
+{{< hint info >}}
+**Tips**
+
+This section is outdated for DMF version >beta.10 because of ongoing migration toward burningalchemist/sql_exporter. Stay tuned!
+
+{{< /hint >}}
+
 The [Prometheus Postgres exporter](https://github.com/prometheus-community/postgres_exporter) collects PostgreSQL internal metrics using system tables.
 
 We override its default configuration to collect additional metrics to trigger advanced alerts and analyze trends over time.

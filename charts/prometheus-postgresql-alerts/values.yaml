@@ -10,7 +10,7 @@ rulesGroupName: postgresql.rules
 
 rules:
 
-  PostgreSQLExporterDown:
+  SQLExporterDown:
     expr: absent(up{service="sql-exporter", target=""})
     for: 5m
     labels:
@@ -19,7 +19,7 @@ rules:
       summary: "Exporter is down"
       description: "SQL Exporter is down"
 
-  PostgreSQLExporterMissingTarget:
+  SQLExporterMissingTarget:
     expr: min(up{service="sql-exporter", target!=""}) by (target,exported_job) < 1
     for : 5m
     labels:
@@ -28,7 +28,7 @@ rules:
       summary: "Exporter scrape for {{ $labels.target }} ({{ $labels.exported_job }}) failed"
       description: "SQL Exporter cannot collect metrics for this target, it's either because the target is down, or the sql-exporter user cannot connect."
 
-  PostgreSQLExporterScrapingLimit:
+  SQLExporterScrapingLimit:
     expr: avg_over_time(scrape_duration_seconds{job="sql-exporter", target=""}[10m]) > 30
     for: 5m
     labels:

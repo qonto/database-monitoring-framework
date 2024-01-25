@@ -2,7 +2,7 @@
 title: Exporter down
 ---
 
-# PostgreSQLExporterDown
+# SQLExporterDown
 
 ## Meaning
 
@@ -14,14 +14,14 @@ The monitoring system is degraded. SQL exporter does not collect SQL metrics, al
 
 ## Diagnosis
 
-1. **Look at Prometheus SQL exporter logs**. The error messages (`level=error`) should explain why the exporter can't scrape metrics.
+1. **Look at SQL exporter logs**. The error messages (`level=error`) should explain why the exporter can't scrape metrics.
 
     Usually, the exporter can't connect to the PostgreSQL server due to network restrictions, authentication failure, missing permissions or timeout.
 
     {{< hint info >}}
 **PostgreSQL required permissions**
 
-The PostgreSQL exporter needs `pg_monitor` role and `LOGIN` options.
+The SQL exporter needs `pg_monitor` role and `LOGIN` options.
     {{< /hint >}}
 
 1. **Look at PostgreSQL connection logs**

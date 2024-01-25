@@ -5,13 +5,13 @@ evaluation_interval: 1m
 
 tests:
 
-    - name: PostgreSQLExporterDown
+    - name: SQLExporterDown
       interval: 1m
       input_series:
           - series: 'up{service="sql-exporter", target="mydatabase"}'
             values: '0x10'
       alert_rule_test:
-          - alertname: PostgreSQLExporterDown
+          - alertname: SQLExporterDown
             eval_time: 5m
             exp_alerts:
                 - exp_labels:
@@ -20,4 +20,4 @@ tests:
                   exp_annotations:
                       summary: "Exporter is down"
                       description: "SQL Exporter is down"
-                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/postgresql/PostgreSQLExporterDown"
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/postgresql/SQLExporterDown"

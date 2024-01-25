@@ -2,7 +2,7 @@
 title: Exporter scraping limit
 ---
 
-# PostgreSQLExporterScrapingLimit
+# SQLExporterScrapingLimit
 
 ## Meaning
 

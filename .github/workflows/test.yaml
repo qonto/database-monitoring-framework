@@ -40,7 +40,7 @@ jobs:
     name: helm
     runs-on: ubuntu-latest
     env:
-      HELM_UNITTEST_VERSION: v0.3.5
+      HELM_UNITTEST_VERSION: v0.4.1
     steps:
       - uses: actions/checkout@v3
 
