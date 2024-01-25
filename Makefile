@@ -5,7 +5,7 @@ PGDATABASE=test
 
 .PHONY: helm-test
 helm-test:
-	helm unittest charts/* -3
+	helm unittest charts/*
 
 .PHONY: kubeconform-test
 kubeconform-test:
