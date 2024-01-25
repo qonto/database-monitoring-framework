@@ -7,6 +7,13 @@ weight: 100
 
 In this tutorial, we'll deploy the Prometheus PostgreSQL exporter with our recommanded configuration to collect all key metrics.
 
+{{< hint info >}}
+**Tips**
+
+This page is outdated for DMF version >beta.10 because of ongoing migration toward sql_exporter. Stay tuned!
+
+{{< /hint >}}
+
 ## Requirements
 
 - Helm (v3.0+)

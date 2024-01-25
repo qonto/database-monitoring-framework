@@ -2,15 +2,15 @@
 title: Exporter scraping limit
 ---
 
-# PostgreSQLExporterScrapingLimit
+# SQLExporterScrapingLimit
 
 ## Meaning
 
-Alert is triggered when Prometheus takes too long to fetch the PostgreSQL exporter metrics
+Alert is triggered when Prometheus takes too long to fetch the SQL exporter metrics
 
 ## Impact
 
-The monitoring system is degraded. PostgreSQL exporter does not collect PostgreSQL metrics, alerts cannot be triggered.
+The monitoring system is degraded. SQL exporter does not collect SQL metrics, alerts cannot be triggered.
 
 ## Diagnosis
 

@@ -8,14 +8,14 @@ tests:
     - name: PostgreSQLReplicationSlotStorageLimit
       interval: 1m
       input_series:
-          - series: 'pg_replication_slots_available_storage_percent{server="db1.unittest.eu-west-3.rds.amazonaws.com:5432",slot_name="unittest"}'
+          - series: 'pg_replication_slots_available_storage_percent{target="db1",slot_name="unittest"}'
             values: 15.8x10
       alert_rule_test:
           - alertname: PostgreSQLReplicationSlotStorageLimit
             eval_time: 5m
             exp_alerts:
                 - exp_labels:
-                      server: db1.unittest.eu-west-3.rds.amazonaws.com:5432
+                      target: db1
                       slot_name: unittest
                       severity: warning
                   exp_annotations:

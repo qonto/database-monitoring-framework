@@ -10,100 +10,91 @@ rulesGroupName: postgresql.rules
 
 rules:
 
-  PostgreSQLExporterDown:
-    expr: up{} * on (instance) postgres_exporter_build_info{} < 1
+  SQLExporterDown:
+    expr: absent(up{service="sql-exporter", target=""})
     for: 5m
     labels:
       severity: critical
     annotations:
       summary: "Exporter is down"
-      description: "{{ $labels.instance }} exporter is down"
+      description: "SQL Exporter is down"
 
-  PostgreSQLExporterMissingScrapeErrorMetric:
-    expr: absent(pg_exporter_last_scrape_error)
-    for: 5m
+  SQLExporterMissingTarget:
+    expr: min(up{service="sql-exporter", target!=""}) by (target,exported_job) < 1
+    for : 5m
     labels:
       severity: critical
     annotations:
-      summary: "PostgreSQL exporter last scrape error metric is missing"
-      description: "PostgreSQL exporter last scrape error metric is missing. Either the exporter is down or some metrics are not collected anymore"
+      summary: "Exporter scrape for {{ $labels.target }} ({{ $labels.exported_job }}) failed"
+      description: "SQL Exporter cannot collect metrics for this target, it's either because the target is down, or the sql-exporter user cannot connect."
 
-  PostgreSQLExporterErrors:
-    expr: max by (job) (last_over_time(pg_exporter_last_scrape_error[10m])) > 0
-    for: 5m
-    labels:
-      severity: critical
-    annotations:
-      summary: "Exporter is reporting scraping errors"
-      description: "{{ $labels.job }} is reporting scraping errors. Some metrics are not collected anymore"
-
-  PostgreSQLExporterScrapingLimit:
-    expr: avg_over_time(pg_exporter_last_scrape_duration_seconds{}[10m]) > 30
+  SQLExporterScrapingLimit:
+    expr: avg_over_time(scrape_duration_seconds{job="sql-exporter", target=""}[10m]) > 30
     for: 5m
     labels:
       severity: warning
     annotations:
-      summary: "Exporter scraping take long time"
-      description: "{{ $labels.instance }} scraping take long time"
+      summary: "Exporter scraping takes long time"
+      description: "SQL Exporter scraping is taking a long time"
 
   PostgreSQLMaxConnections:
     expr: |
-      max by (server) (pg_stat_connections_count)
+      max by (target) (pg_stat_connections_count)
       * 100
-      / max by (server) (pg_settings_max_connections{})
+      / max by (target) (pg_settings_max_connections)
       > 80
     for: 10m
     labels:
       severity: warning
     annotations:
-      summary: "{{ $labels.server | stripDomain | stripPort }} is close from the maximum database connections"
-      description: '{{ $labels.server | stripDomain | stripPort }} uses {{ printf "%.2g" $value }}% of the maximum database connections'
+      summary: "{{ $labels.target }} is close from the maximum database connections"
+      description: '{{ $labels.target }} uses {{ printf "%.2g" $value }}% of the maximum database connections'
 
   PostgreSQLReplicationSlotStorageLimit:
-    expr: max by (server, slot_name) (pg_replication_slots_available_storage_percent{}) < 20
+    expr: max by (target, slot_name) (pg_replication_slots_available_storage_percent{}) < 20
     for: 5m
     labels:
       severity: warning
     annotations:
-      summary: "{{ $labels.slot_name }} on {{ $labels.server | stripDomain | stripPort }} is close to its storage limit"
+      summary: "{{ $labels.slot_name }} on {{ $labels.target }} is close to its storage limit"
       description: '{{ $labels.slot_name }} has {{ printf "%.2g" $value }}% free disk storage space'
 
   PostgreSQLInactiveLogicalReplicationSlot:
-    expr: max by (server, slot_name) (pg_replication_slots_active{slot_type="logical"}) < 1
+    expr: max by (target, slot_name) (pg_replication_slots_active{slot_type="logical"}) < 1
     for: 10m
     labels:
       severity: warning
     annotations:
       summary: "Logical replication slot is inactive"
-      description: "{{ $labels.slot_name }} on {{ $labels.server | stripDomain | stripPort }} is inactive"
+      description: "{{ $labels.slot_name }} on {{ $labels.target }} is inactive"
 
   PostgreSQLInactivePhysicalReplicationSlot:
-    expr: max by (server, slot_name) (pg_replication_slots_active{slot_type="physical"}) < 1
+    expr: max by (target, slot_name) (pg_replication_slots_active{slot_type="physical"}) < 1
     for: 10m
     labels:
       severity: warning
     annotations:
       summary: "Physical replication slot is inactive"
-      description: "{{ $labels.slot_name }} on {{ $labels.server | stripDomain | stripPort }} is inactive"
+      description: "{{ $labels.slot_name }} on {{ $labels.target }} is inactive"
 
   PostgreSQLLongRunningQuery:
-    expr: max by (server, datname, usename, pid) (pg_active_backend_duration_minutes{usename!=""}) > 30
+    expr: max by (target, datname, usename, pid) (pg_active_backend_duration_minutes{usename!=""}) > 30
     for: 1m
     labels:
       severity: warning
     annotations:
-      summary: "Long running query on {{ $labels.datname }} of {{ $labels.server | stripDomain | stripPort }}"
-      description: "{{ $labels.usename }} is running a long query on {{ $labels.datname }} of {{ $labels.server | stripDomain | stripPort }} with pid {{ $labels.pid }}"
+      summary: "Long running query on {{ $labels.datname }} of {{ $labels.target }}"
+      description: "{{ $labels.usename }} is running a long query on {{ $labels.datname }} of {{ $labels.target }} with pid {{ $labels.pid }}"
     pintComments:
       - disable promql/series
 
   PostgreSQLInvalidIndex:
-    expr: max by (cluster, datname, relname, indexrelname) (pg_stat_user_indexes_idx_blks_hit{indisvalid="false"}) >= 0
+    expr: max by (target, datname, relname, indexrelname) (pg_stat_user_indexes_invalid_index_count) >= 0
     for: 1h
     labels:
       severity: warning
     annotations:
       summary: "{{ $labels.indexrelname }} is invalid"
-      description: "{{ $labels.indexrelname }} of {{ $labels.relname }} table on {{ $labels.datname }} database on {{ $labels.cluster }} is invalid"
+      description: "{{ $labels.indexrelname }} of {{ $labels.relname }} table on {{ $labels.datname }} database on {{ $labels.target }} is invalid"
     pintComments:
       - disable promql/series

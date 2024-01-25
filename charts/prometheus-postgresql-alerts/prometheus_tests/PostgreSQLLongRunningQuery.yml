@@ -8,14 +8,14 @@ tests:
     - name: PostgreSQLLongRunningQuery
       interval: 1m
       input_series:
-          - series: 'pg_active_backend_duration_minutes{server="db1.unittest.eu-west-3.rds.amazonaws.com:5432",datname="unittest",usename="test",pid="1234"}'
+          - series: 'pg_active_backend_duration_minutes{target="db1",datname="unittest",usename="test",pid="1234"}'
             values: 40+1x10
       alert_rule_test:
           - alertname: PostgreSQLLongRunningQuery
             eval_time: 1m
             exp_alerts:
                 - exp_labels:
-                      server: db1.unittest.eu-west-3.rds.amazonaws.com:5432
+                      target: db1
                       datname: unittest
                       usename: test
                       severity: warning

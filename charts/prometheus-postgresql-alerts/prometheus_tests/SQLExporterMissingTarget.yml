@@ -1,0 +1,26 @@
+rule_files:
+    - rules.yml
+
+evaluation_interval: 1m
+
+tests:
+
+    - name: SQLExporterMissingTarget
+      interval: 1m
+      input_series:
+          - series: 'up{service="sql-exporter", target="db1", exported_job="pg-metrics-instance"}'
+            values: '0x00'
+          - series: 'up{service="sql-exporter", target="", exported_job="pg-metrics-instance"}'
+            values: '0x10'
+      alert_rule_test:
+          - alertname: SQLExporterMissingTarget
+            eval_time: 5m
+            exp_alerts:
+                - exp_labels:
+                      target: db1
+                      exported_job: pg-metrics-instance
+                      severity: critical
+                  exp_annotations:
+                      summary: "Exporter scrape for db1 (pg-metrics-instance) failed"
+                      description: "SQL Exporter cannot collect metrics for this target, it's either because the target is down, or the sql-exporter user cannot connect."
+                      runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/postgresql/SQLExporterMissingTarget"

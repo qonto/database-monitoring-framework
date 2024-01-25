@@ -7,6 +7,13 @@ weight: 200
 
 In this tutorial, you'll deploy the alerts for PostgreSQL.
 
+{{< hint info >}}
+**Tips**
+
+This page is outdated for DMF version >beta.10 because of ongoing migration toward sql_exporter. Stay tuned!
+
+{{< /hint >}}
+
 ## Requirements
 
 - Helm (v3.0+)
@@ -23,7 +30,7 @@ This tutorial assumes you have Kubernetes, Helm and Prometheus knowledge.
 
     ```bash
     KUBERNETES_NAMESPACE=monitoring
-    helm upgrade --install prometheus-rds-alerts-chart oci://public.ecr.aws/qonto/prometheus-rds-alerts-chart:{{% current_version %}} --namespace ${KUBERNETES_NAMESPACE}
+    helm upgrade --install prometheus-postgresql-alerts-chart oci://public.ecr.aws/qonto/prometheus-rds-alerts-chart:{{% current_version %}} --namespace ${KUBERNETES_NAMESPACE}
     ```
 
 1. Connect on Prometheus and check rules are defined

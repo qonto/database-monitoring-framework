@@ -34,7 +34,7 @@ This tutorial assumes you have some knowledge of Kubernetes, Helm and AWS IAM.
 - AWS EKS cluster
 - eksctl
 
-<!-- markdownlint-disable-next-line no-emphasis-as-header -->
+<!-- markdownlint-disable-next-line no-emphasis-as-heading -->
 **Steps**
 
 1. Create an IAM policy
