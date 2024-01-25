@@ -81,9 +81,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Downgrade Helm # 1.13.0 has bug that block push charts on OCI https://github.com/helm/helm/issues/12491
+      - name: Get Helm
         run: |
-          curl -sSLo /tmp/helm.tar.gz "https://get.helm.sh/helm-v3.12.0-linux-amd64.tar.gz" && \
+          curl -sSLo /tmp/helm.tar.gz "https://get.helm.sh/helm-v3.13.1-linux-amd64.tar.gz" && \
           tar --strip-components=1 -C /tmp -xzvf /tmp/helm.tar.gz linux-amd64/helm && \
           mv /tmp/helm /usr/local/bin/helm && \
           rm -f /tmp/helm.tar.gz
@@ -112,9 +112,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Downgrade Helm # 1.13.0 has bug that block push charts on OCI https://github.com/helm/helm/issues/12491
+      - name: Get helm
         run: |
-          curl -sSLo /tmp/helm.tar.gz "https://get.helm.sh/helm-v3.12.0-linux-amd64.tar.gz" && \
+          curl -sSLo /tmp/helm.tar.gz "https://get.helm.sh/helm-v3.13.1-linux-amd64.tar.gz" && \
           tar --strip-components=1 -C /tmp -xzvf /tmp/helm.tar.gz linux-amd64/helm && \
           mv /tmp/helm /usr/local/bin/helm && \
           rm -f /tmp/helm.tar.gz
