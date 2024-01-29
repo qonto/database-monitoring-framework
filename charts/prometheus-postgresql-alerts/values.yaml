@@ -11,7 +11,7 @@ rulesGroupName: postgresql.rules
 rules:
 
   SQLExporterDown:
-    expr: absent(up{service="sql-exporter", target=""})
+    expr: absent(up{service="sql-exporter", target=""}) or up{service="sql-exporter", target=""} <1
     for: 5m
     labels:
       severity: critical
