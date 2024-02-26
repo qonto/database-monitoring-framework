@@ -20,6 +20,8 @@ Alert is triggered when a PostgreSQL query runs for an extended period.
 
 ## Diagnosis
 
+1. Find the PID(s) of queries by running `pg_active_backend_duration_minutes{ usename=...,datname=...,target=... }`
+
 1. Open `PostgreSQL server live` dashboard
 
 1. Click on the query to get details

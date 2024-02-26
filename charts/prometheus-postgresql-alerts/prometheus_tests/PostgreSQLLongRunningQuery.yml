@@ -19,8 +19,7 @@ tests:
                       datname: unittest
                       usename: test
                       severity: warning
-                      pid: 1234
                   exp_annotations:
                       summary: "Long running query on unittest of db1"
-                      description: "test is running a long query on unittest of db1 with pid 1234"
+                      description: "test is running a long query on unittest of db1"
                       runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/postgresql/PostgreSQLLongRunningQuery"
