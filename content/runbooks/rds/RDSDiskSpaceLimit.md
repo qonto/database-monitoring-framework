@@ -104,7 +104,7 @@ You must avoid reaching no disk space left situation.
     
         ❗ If the RDS instance has replicas instances (replica or reporting), you must repeat the operation for all replicas to keep the same configuration between instances
     
-    4. Backport changes in [Terraform](https://gitlab.qonto.co/devops/terraform/stacks/rds)
+    4. Backport changes in Terraform
 
 ## Additional resources
 
