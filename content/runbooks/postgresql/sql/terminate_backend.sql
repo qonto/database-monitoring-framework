@@ -11,4 +11,4 @@ SELECT
     state_change,
     query
 FROM pg_stat_activity
-WHERE pid = <replace_with_pid>;
+WHERE pid in ('<replace_with_pids>');
