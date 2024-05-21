@@ -32,11 +32,13 @@ Alert is triggered when SQL queries run for an extended period.
 {{% sql "../postgresql/sql/list-long-running-transactions.sql" %}}
     {{< /details >}}
 
-1. Cancel the queries
+    Queries could be blocked in trying to acquire a lock, so pay particular attention at the `blocked_by` column. If you identify specific queries blocking others, note down their PIDs. Below is a focused view of current locks on the database:
 
-    {{% sql "sql/cancel_backend.sql" %}}
+    {{< details title="SQL" open=false >}}
+{{% sql "../postgresql/sql/list-ongoing-locks.sql" %}}
+    {{< /details >}}
 
-1. If queries do not get cancelled, kill them
+1. Terminate in priority the blocking queries, if not enough, terminate the other long running queries
 
     {{% sql "sql/terminate_backend.sql" %}}
 
