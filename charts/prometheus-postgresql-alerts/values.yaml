@@ -77,14 +77,14 @@ rules:
       summary: "Physical replication slot is inactive"
       description: "{{ $labels.slot_name }} on {{ $labels.target }} is inactive"
 
-  PostgreSQLLongRunningQuery:
-    expr: max by (target, datname, usename, pid) (pg_active_backend_duration_minutes{usename!=""}) > 30
+  PostgreSQLLongRunningQueries:
+    expr: max by (target, datname, usename) (pg_active_backend_duration_minutes{usename!=""}) > 30
     for: 1m
     labels:
       severity: warning
     annotations:
-      summary: "Long running query on {{ $labels.datname }} of {{ $labels.target }}"
-      description: "{{ $labels.usename }} is running a long query on {{ $labels.datname }} of {{ $labels.target }} with pid {{ $labels.pid }}"
+      summary: "Long running queries on {{ $labels.datname }} of {{ $labels.target }} initiated by {{ $labels.usename }}"
+      description: "{{ $labels.usename }} is running long queries on {{ $labels.datname }} of {{ $labels.target }}"
     pintComments:
       - disable promql/series
 

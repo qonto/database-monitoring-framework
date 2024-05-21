@@ -27,7 +27,7 @@ The monitoring system is degraded. SQL exporter does not collect SQL metrics, al
 1. Identify and kill heavy queries
 
     <details>
-    <summary>How terminate a query?</summary>
+    <summary>How to terminate queries?</summary>
 
     {{% sql "sql/terminate_backend.sql" %}}
 
