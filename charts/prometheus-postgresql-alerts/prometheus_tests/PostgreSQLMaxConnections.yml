@@ -21,5 +21,5 @@ tests:
                       severity: warning
                   exp_annotations:
                       summary: "db1 is close from the maximum database connections"
-                      description: "db1 uses 90% of the maximum database connections"
+                      description: "db1 uses >80% of the maximum database connections"
                       runbook_url: "https://qonto.github.io/database-monitoring-framework/0.0.0/runbooks/postgresql/PostgreSQLMaxConnections"

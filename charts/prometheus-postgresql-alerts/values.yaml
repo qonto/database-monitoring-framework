@@ -48,7 +48,7 @@ rules:
       severity: warning
     annotations:
       summary: "{{ $labels.target }} is close from the maximum database connections"
-      description: '{{ $labels.target }} uses {{ printf "%.2g" $value }}% of the maximum database connections'
+      description: '{{ $labels.target }} uses >80% of the maximum database connections'
 
   PostgreSQLReplicationSlotStorageLimit:
     expr: max by (target, slot_name) (pg_replication_slots_available_storage_percent{}) < 20
