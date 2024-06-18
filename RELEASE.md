@@ -20,6 +20,6 @@ The project is using [Semantic Versioning](https://semver.org):
 The following steps must be done by one of the Database Monitoring Framework Maintainers:
 
 - Verify the CI tests pass before continuing.
-- Create a tag using the current `HEAD` of the `main` branch by using `git tag v<major>.<minor>.<patch>`
-- Push the tag to upstream using `git push upstream <major>.<minor>.<patch>`
+- Create a tag using the current `HEAD` of the `main` branch by using `git tag <major>.<minor>.<patch>`
+- Push the tag to upstream using `git push origin <major>.<minor>.<patch>`
 - This tag will kick-off the [GitHub Release Workflow](https://github.com/qonto/database-monitoring-framework/blob/main/.github/workflows/release.yaml), which will auto-generate GitHub release and publish Helm charts into the container registry
