@@ -104,8 +104,10 @@ Steps
 Prometheus alerts are available as Helm chart:
 
 <!-- markdownlint-disable no-bare-urls -->
+
 | Component | Chart URL | Website | Parameters |
 | --- | --- | --- | --- |
 | RDS | oci://public.ecr.aws/qonto/prometheus-rds-alerts-chart | [Link](https://gallery.ecr.aws/qonto/prometheus-rds-alerts-chart) | [Link](https://github.com/qonto/database-monitoring-framework/blob/{{% current_version %}}/charts/prometheus-rds-alerts/values.yaml) |
 | PostgreSQL | oci://public.ecr.aws/qonto/prometheus-postgresql-alerts-chart | [Link](https://gallery.ecr.aws/qonto/prometheus-postgresql-alerts-chart) | [Link](https://github.com/qonto/database-monitoring-framework/blob/{{% current_version %}}/charts/prometheus-postgresql-alerts/values.yaml)
+
 <!-- markdownlint-enable no-bare-urls -->
