@@ -26,7 +26,7 @@ jobs:
         ports:
           - 5432:5432
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: run SQL tests
         run: make sql-test
@@ -42,7 +42,7 @@ jobs:
     env:
       HELM_UNITTEST_VERSION: v0.4.1
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install helm-unittest
         run: helm plugin install --version $HELM_UNITTEST_VERSION https://github.com/helm-unittest/helm-unittest.git
@@ -59,7 +59,7 @@ jobs:
     env:
       KUBECONFORM_VERSION: 0.6.2
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install kubeconform
         run: |
@@ -75,7 +75,7 @@ jobs:
     env:
       PROMETHEUS_VERSION: 2.48.0
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Install Promtool (Prometheus)
         run: |
