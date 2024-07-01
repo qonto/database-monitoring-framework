@@ -52,7 +52,7 @@ jobs:
         run: ./scripts/generate_website_versions.sh ${BASE_URL}
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
 
