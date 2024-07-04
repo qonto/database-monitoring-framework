@@ -74,11 +74,11 @@ You must avoid reaching no disk space left situation.
 {{< /hint >}}
 
     1. Set AWS_PROFILE
-    
+
         ```bash
         export AWS_PROFILE=<AWS account>
         ```
-    
+
     2. Determine the minimum storage for the increase
         💡 RDS requires a minimal storage increase of 10%
 
@@ -101,9 +101,9 @@ You must avoid reaching no disk space left situation.
         aws rds modify-db-instance --db-instance-identifier ${INSTANCE_IDENTIFIER} --allocated-storage ${NEW_ALLOCATED_STORAGE} --apply-immediately \
         | jq .DBInstance.PendingModifiedValues
         ```
-    
+
         ❗ If the RDS instance has replicas instances (replica or reporting), you must repeat the operation for all replicas to keep the same configuration between instances
-    
+
     4. Backport changes in Terraform
 
 ## Additional resources
