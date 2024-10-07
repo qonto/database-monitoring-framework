@@ -38,6 +38,15 @@ rules:
       summary: "{{ $labels.instance }} is reporting errors"
       description: "{{ $labels.instance }} is reporting {{ $value }} errors per minute"
 
+  RDSLowDiskSpaceCount:
+    expr: count(10 < max by (aws_account_id, aws_region, dbidentifier) (rds_free_storage_bytes{} * 100 / rds_allocated_storage_bytes{}) < 20) by (aws_account_id,aws_region) >= 1
+    for: 15m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Less than 20% free disk space on at least one instance"
+      description: 'One or more RDS instances has <20% free disk space'
+
   RDSDiskSpaceLimit:
     expr: max by (aws_account_id, aws_region, dbidentifier) (rds_free_storage_bytes{} * 100 / rds_allocated_storage_bytes{}) < 10
     for: 15m
