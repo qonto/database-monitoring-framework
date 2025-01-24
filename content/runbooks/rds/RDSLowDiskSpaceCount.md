@@ -20,4 +20,4 @@ The PostgreSQL instance(s) might stop to prevent data corruption if no more disk
    max by (aws_account_id, aws_region, dbidentifier) (rds_free_storage_bytes{} * 100 / rds_allocated_storage_bytes{}) < 20
    ```
 
-1. Refer to [RDSDiskSpaceLimit](RDSDiskSpaceLimit.md) for each of them as it's the same alert just ringing a bit earlier.
+1. Refer to [RDSDiskSpaceLimit]({{< ref "RDSDiskSpaceLimit" >}}) for each of them as it's the same alert just ringing a bit earlier.
