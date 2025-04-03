@@ -78,9 +78,10 @@ You must avoid reaching no disk space left situation.
         ```bash
         export AWS_PROFILE=<AWS account>
         ```
+
     2. Request aws admin permissions
 
-        ```
+        ```bash
         qontoctl aws admin get-access "bump $RDS_INSTANCE storage"
         ```
 
