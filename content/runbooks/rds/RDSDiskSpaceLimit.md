@@ -79,13 +79,7 @@ You must avoid reaching no disk space left situation.
         export AWS_PROFILE=<AWS account>
         ```
 
-    2. Request aws admin permissions
-
-        ```bash
-        qontoctl aws admin get-access "bump $RDS_INSTANCE storage"
-        ```
-
-    3. Determine the minimum storage for the increase
+    2. Determine the minimum storage for the increase
         💡 RDS requires a minimal storage increase of 10%
 
         ```bash
@@ -97,7 +91,7 @@ You must avoid reaching no disk space left situation.
         | jq -r '{"Current IOPS": .DBInstances[0].Iops, "Current Storage Limit": .DBInstances[0].AllocatedStorage, "New minimum storage size": ((.DBInstances[0].AllocatedStorage|tonumber)+(.DBInstances[0].AllocatedStorage|tonumber*0.1|floor))}'
         ```
 
-    4. Increase storage:
+    3. Increase storage:
 
         ```bash
         NEW_ALLOCATED_STORAGE=<replace with new allocated storage in GB>
@@ -110,7 +104,7 @@ You must avoid reaching no disk space left situation.
 
         ❗ If the RDS instance has replicas instances (replica or reporting), you must repeat the operation for all replicas to keep the same configuration between instances
 
-    5. Backport changes in Terraform
+    4. Backport changes in Terraform
 
 ## Additional resources
 
