@@ -73,7 +73,7 @@ jobs:
           role-session-name: githubActions
 
       - name: Login to Amazon ECR for helm chart
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
         with:
           registry-type: public
           mask-password: 'true'
@@ -104,7 +104,7 @@ jobs:
           role-session-name: githubActions
 
       - name: Login to Amazon ECR for helm chart
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
         with:
           registry-type: public
           mask-password: 'true'
