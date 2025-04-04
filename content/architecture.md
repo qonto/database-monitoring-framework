@@ -17,24 +17,17 @@ The [Prometheus RDS exporter](https://github.com/qonto/prometheus-rds-exporter) 
 
 This component is optional but highly recommended for AWS customers.
 
-### Prometheus PostgreSQL exporter
+### PostgreSQL exporter
 
-{{< hint info >}}
-**Tips**
+A generic [SQL exporter](https://github.com/burningalchemist/sql_exporter) collects PostgreSQL internal metrics using system tables.
 
-This section is outdated for DMF version >beta.10 because of ongoing migration toward burningalchemist/sql_exporter. Stay tuned!
-
-{{< /hint >}}
-
-The [Prometheus Postgres exporter](https://github.com/prometheus-community/postgres_exporter) collects PostgreSQL internal metrics using system tables.
-
-We override its default configuration to collect additional metrics to trigger advanced alerts and analyze trends over time.
+We have our own set of collectors, retrieving metrics to trigger advanced alerts and analyze trends over time. All our collectors for PostgreSQL can be found in [postgresql-collectors](https://github.com/qonto/postgresql-collectors).
 
 This component is optional but highly recommended to analyze PostgreSQL metrics over time.
 
 ### Prometheus alerts
 
-Monitoring alerts are defined in Prometheus rule format and work out of the box with the RDS and PostgreSQL exporters in Kubernetes environment with Prometheus operator.
+Monitoring alerts are defined in Prometheus rule format and work out of the box with the RDS and SQL exporters in Kubernetes environment with Prometheus operator.
 
 They are distributed via Helm chart for convenient deployment:
 
@@ -43,7 +36,7 @@ They are distributed via Helm chart for convenient deployment:
 | [prometheus-rds-alerts-chart](https://gallery.ecr.aws/qonto/prometheus-rds-alerts-chart) | Alerts for AWS RDS |
 | [prometheus-postgresql-alerts-chart](https://gallery.ecr.aws/qonto/prometheus-postgresql-alerts-chart) | Alerts for PostgreSQL |
 
-The charts deploy [Prometheus `PrometheusRule`](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/alerting.md#deploying-prometheus-rules) Kubernetes resources. So Prometheus automatically discover the alerts.
+These charts deploy [Prometheus `PrometheusRule`](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/alerting.md#deploying-prometheus-rules) Kubernetes resources. So Prometheus automatically discovers the alerts.
 
 ### Runbooks
 
